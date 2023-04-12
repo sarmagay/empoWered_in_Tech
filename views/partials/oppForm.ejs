@@ -1,0 +1,79 @@
+<form class="form"
+     id="opportunityForm"
+     method="POST"
+     action="https://cs.wellesley.edu/~cs304flask/cgi-bin/dump.cgi"> <!--CHANGE THIS-->
+   <p><label>Opportunity Name: <input name="opportunityName" required></label></p>
+
+
+   <p><label>Application Link: <input type=text name="applicationLink" value="https://www.starbucks.com/careers/search/" required></label></p>
+
+
+   <p><label>Opportunity Type:
+   <select name="oppType" required>
+       <option value="">Choose Type</option>
+       <option value="conference">Conference</option>
+       <option value="fellowship">Fellowship</option>
+       <option value="industry">Industry</option>
+       <option value="research">Research</option>
+       <option value="workshop">Workshop</option>
+       <option value="other">Other</option>
+   </select>
+   </label></p>
+
+
+   <p><label>If "Other", please specify: <input type=text name="otherOppType"></label></p>
+
+
+   <p><label>Organization/Company: <input type=text name="org" value="Starbucks" required></label></p>
+
+
+   <div id="oppSubfieldDropdown" class="dropdown-check-list" tabindex="100">
+       <span class="oppSubfield">Choose Opportunity Subfield(s)</span>
+       <ul class="items">
+         <li><input type="checkbox" value="bioinformatics"/>Bioinformatics </li>
+         <li><input type="checkbox" value="cloud"/>Cloud Computing/Development</li>
+         <li><input type="checkbox" value="compVision"/>Computer Vision</option </li>
+         <li><input type="checkbox" value="dataScience"/>Data Science </li>
+         <li><input type="checkbox" value="graphics"/>Graphics </li>
+         <li><input type="checkbox" value="hci"/>Human-Computer Interaction </li>
+         <li><input type="checkbox" value="ml"/>Machine Learning</li>
+         <li><input type="checkbox" value="prodDesign"/>Product Design</li>
+         <li><input type="checkbox" value="prodMgmt"/>Product Management</li>
+         <li><input type="checkbox" value="swe"/>Software Engineering</li>
+         <li><input type="checkbox" value="systems"/>Systems</li>
+         <li><input type="checkbox" value="uiux"/>UI/UX</li>
+         <li><input type="checkbox" value="other"/>Other</li>
+       </ul>
+     </div>
+
+
+   <p><label>If "Other", please specify: <input type=text name="otherOppSubfield"></label></p>
+
+
+   <p><label>Location (put "remote" if remote opportunity): <input name="location" value="Orlando, FL" required></label></p>
+
+
+   <p><label>Spam/Flyer (optional): <input type=file name="spam"></label></p>
+
+
+   <p><label>Expiration (optional):
+       <% let endDate = Date();
+       endDate.setFullYear(date.getFullYear() + 2);
+       let todayDate = Date(); %>
+       <input name="due" type=date value="todayDate" min="2023-04-12" max="<%= endDate %>">
+   </label></p>
+
+
+   <p><label>Referral Link (Optional): <input type=text name="referralLink"></label></p>
+
+
+   <p><label>Description (optional):
+       <textarea rows="3" cols="30" name="description"></textarea>
+   </label></p>
+
+
+   <p><label>Your Username: <input type=text name="addedBy" required></label></p>
+
+
+   <p><button type="submit">Post!</button></p>
+</form>
