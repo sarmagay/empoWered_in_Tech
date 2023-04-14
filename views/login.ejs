@@ -9,6 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
+    <%- include("partials/simpleNavbar.ejs") %>
     <h1>Login</h1>
 
     <form action="action_page.php" method="post">
@@ -22,6 +23,11 @@
       
           <button type="submit">Login</button>
         </div>
+    </form>
+
+    <div>
+        <span class="signUp">Don't have an account yet? <a href="/signUp/">Sign-up!</a></span>
+    </div>
 
 
     <!-- load local js -->
