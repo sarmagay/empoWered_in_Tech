@@ -53,21 +53,124 @@ app.use(cookieSession({
 // custom routes here
 
 const DB = process.env.USER;
+const EMPOWER = 'empower';
+const USERS = 'user';
+const OPPS = 'opps';
 const WMDB = 'wmdb';
 const STAFF = 'staff';
 
 // main page. This shows the use of session cookies
 app.get('/', (req, res) => {
+    /*
     let uid = req.session.uid || 'unknown';
     let visits = req.session.visits || 0;
     visits++;
     req.session.visits = visits;
     console.log('uid', uid);
     return res.render('index.ejs', {uid, visits});
+    */
+    return res.render('index.ejs');
 });
+
+app.get('/login', (req, res) => {
+    return res.render('login.ejs');
+});
+
+app.get('/signUp', (req, res) => {
+    return res.render('signUp.ejs');
+})
+
+app.get('/userForm', (req, res) => {
+    let userUID = 1;
+    let userName = 'Alexa Halim';
+    return res.render('userForm.ejs', {userUID: userUID, userName: userName});
+})
+
+app.get('/postings', async (req, res) => {
+    const db = await Connection.open(mongoUri, EMPOWER);
+    let allOpps = await db.collection(OPPS).find({}).toArray();
+    // let currentUser = await db.collection(USERS).find({}).toArray(); // must figure out how to find currentUser
+    let userUID = 1;
+    let userName = 'Alexa Halim';
+    // need user name and uid for navbar
+    return res.render('postings.ejs', {list: allOpps, userUID: userUID, userName: userName});
+})
+
+app.get('/oppForm', (req, res) => {
+    let userUID = 1;
+    let userName = 'Alexa Halim';
+    // need user name and uid for navbar
+    return res.render('oppForm.ejs', {userUID: userUID, userName: userName});
+})
+
+app.get('/post/:oid', async (req, res) => {
+    // need data from corresponding opportunity doc
+    let postOID = parseInt(req.params.oid);
+    const db = await Connection.open(mongoUri, EMPOWER);
+    let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
+    // need user name and uid for navbar
+    let userUID = 1;
+    let userName = 'Alexa Halim';
+    // check if current User is same as author of doc
+    let author = true;
+    return res.render('postPage.ejs', {post: opp, author: author, userUID: userUID, userName: userName});
+})
+
+app.get('/user/:uid', async (req, res) => {
+    // need data from corresponding userProfile
+    let currUserUID = parseInt(req.params.uid);
+    const db = await Connection.open(mongoUri, EMPOWER);
+    let user = await db.collection(USERS).find({uid: currUserUID}).toArray();
+    // need user name and uid for navbar
+    let userUID = 1;
+    let userName = 'Alexa Halim';
+    return res.render('userProfile.ejs', {user: user, userUID: userUID, userName: userName});
+})
+
+app.get('/post/update/:oid', async (req, res) => {
+    // need data from corresponding opportunity doc
+    let postOID = parseInt(req.params.oid);
+    const db = await Connection.open(mongoUri, EMPOWER);
+    let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
+    // need user name and uid for navbar
+    let userUID = 1;
+    let userName = 'Alexa Halim';
+    return res.render('updateOpp.ejs', {opp: opp, userUID: userUID, userName: userName});
+})
 
 // shows how logins might work by setting a value in the session
 // This is a conventional, non-Ajax, login, so it redirects to main page 
+app.post('/login', (req, res) => {
+    // adding confirmation of user
+    res.redirect('/postings');
+})
+
+app.post('/signUp', (req, res) => {
+    res.redirect('/userForm/');
+})
+
+app.post('/userForm', (req, res) => {
+    // make sure necessary fields are filled
+    let uid = req.body.uid;
+    res.redirect('user/' + uid);
+})
+
+app.post('/oppForm', (req, res) => {
+    let oid = req.body.oid;
+    res.redirect('/post/' + oid)
+})
+
+app.post('/user/:uid', (req, res) => {
+    let uid = parseInt(req.params.uid);
+    res.redirect('/user/' + uid)
+})
+
+app.post('/post/update/:oid', () => {
+    let oid = parseInt(req.params.oid);
+    // checking if user is author of post
+    res.redirect('/post/' + oid)
+})
+
 app.post('/set-uid/', (req, res) => {
     console.log('in set-uid');
     req.session.uid = req.body.uid;
