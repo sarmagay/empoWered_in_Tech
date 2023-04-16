@@ -73,7 +73,7 @@
 
    <p><label>Expiration (optional):
        <% let endDate = Date();
-       endDate.setFullYear(date.getFullYear() + 2);
+       endDate.setFullYear(endDate.getFullYear() + 2);
        let todayDate = Date(); %>
        <input name="due" type=date value="todayDate" min="2023-04-12" max="<%= endDate %>">
    </label></p>
