@@ -45,7 +45,7 @@
     <%- include("partials/commentForm.ejs") %>
 
     <% if (author == True) { %>
-        <a href=`/post/update<%= post.oid %>` class='button'> Edit this post</a>
+        <a href=`/post/update/<%= post.oid %>` class='button'> Edit this post</a>
     <% } %>
     
     <!-- load local js -->
