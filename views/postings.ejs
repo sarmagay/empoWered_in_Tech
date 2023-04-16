@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>EmpoWered in Tech</title>
+    <!-- load local stylesheet (css) -->
+    <link rel="stylesheet" href="/styles.css" />
+    <!-- loading jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <%- include("partials/navbar.ejs") %>
+
+    <h1>Computer Science Opportunities</h1>
+
+    <ul>
+        <% list.forEach( (elt) => {%>
+            <li>
+                <div class="container" id="feedBox"> 
+                    <p> <%= elt.name %> </p>
+                    <p> <%= elt.type %> </p>
+                    <p> <%= elt.org %> </p>
+                    <p> <%= elt.location %> </p>
+                </div>
+                <a href="/post/<%= elt.oid %>">
+                    <span class="link"></span>
+                </a>
+            </li>
+        <% }); %>
+    </ul>
+
+    <script src="/main.js"></script>
+</body>
+</html>

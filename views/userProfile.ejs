@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>EmpoWered in Tech</title>
+    <!-- load local stylesheet (css) -->
+    <link rel="stylesheet" href="/styles.css" />
+    <!-- loading jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <%- include("partials/navbar.ejs") %>
+
+    <form class="form"
+     id="userForm"
+     method="POST"
+     action="https://cs.wellesley.edu/~cs304flask/cgi-bin/dump.cgi"> <!--CHANGE THIS-->
+        <p><label>Full name: <input name="fullName" value="<%= user.name %>" required></label></p>
+
+        <p><label>Username: <input name="Username" value="<%= user.uid %>" required></label></p>
+
+        <p><label>Wellesley email: <input name="email" value="<%= user.email %>" required></label></p>
+
+        <p><label>User status:
+            <select name="userStatus" value="<%= user.status %>" required>
+                <option value="">Choose Type</option>
+                <option value="alumn">Alumn</option>
+                <option value="professor">Professor</option>
+                <option value="staff">Staff</option>
+                <option value="student">Student</option>
+                <option value="affiliate">Other Affiliate</option>
+            </select>
+        </label></p>
+
+        <p><label>Interest: <input type=text name="org" value="<%= user.industry %>" required></label></p>
+
+        <div id="interestTypeDropdown" class="dropdown-check-list" tabindex="100">
+            <span class="interestType">Choose Interest(s)</span>
+                <ul class="items">
+                <li><input type="checkbox" value="bioinformatics"/>Bioinformatics </li>
+                <li><input type="checkbox" value="cloud"/>Cloud Computing/Development</li>
+                <li><input type="checkbox" value="compVision"/>Computer Vision</option </li>
+                <li><input type="checkbox" value="dataScience"/>Data Science </li>
+                <li><input type="checkbox" value="graphics"/>Graphics </li>
+                <li><input type="checkbox" value="hci"/>Human-Computer Interaction </li>
+                <li><input type="checkbox" value="ml"/>Machine Learning</li>
+                <li><input type="checkbox" value="prodDesign"/>Product Design</li>
+                <li><input type="checkbox" value="prodMgmt"/>Product Management</li>
+                <li><input type="checkbox" value="swe"/>Software Engineering</li>
+                <li><input type="checkbox" value="systems"/>Systems</li>
+                <li><input type="checkbox" value="uiux"/>UI/UX</li>
+                <li><input type="checkbox" value="other"/>Other</li>
+            </ul>
+        </div>
+
+        <p><label>If "Other", please specify: <input type=text name="otherInterest"></label></p>
+
+        <p><label>Class Year (optional): <input type=text name="classYear" value="<%= user.classYear %>"></label></p>
+
+        <p><label>Major(s) (optional): <input type=text name="majors" value="<%= user.major %>"></label></p>
+        <p><label>Minor(s) (optional): <input type=text name="minors" value="<%= user.minor %>"></label></p>
+
+        <p><button type="submit">Update Profile</button></p>
+    </form>
+
+    <script src="/main.js"></script>
+</body>
+</html>
