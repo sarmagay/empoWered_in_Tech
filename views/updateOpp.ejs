@@ -23,7 +23,7 @@
 
    <p><label>Opportunity Type:
    <select name="oppType" value="<%= opp.type %>"" required>
-       <option value="">Choose Type</option>
+       <option value=""><%=opp.type%></option>
        <option value="conference">Conference</option>
        <option value="fellowship">Fellowship</option>
        <option value="industry">Industry</option>
@@ -41,7 +41,7 @@
 
 
    <div id="oppSubfieldDropdown" class="dropdown-check-list" tabindex="100">
-       <span class="oppSubfield">Choose Opportunity Subfield(s)</span>
+       <span class="oppSubfield">Choose Opportunity Subfield(s):</span>
        <ul class="items">
          <li><input type="checkbox" value="bioinformatics"/>Bioinformatics </li>
          <li><input type="checkbox" value="cloud"/>Cloud Computing/Development</li>
@@ -70,14 +70,14 @@
 
 
    <p><label>Expiration (optional):
-       <% let endDate = Date();
+       <% let endDate = new Date();
        endDate.setFullYear(endDate.getFullYear() + 2);
-       let todayDate = Date(); %>
+       let todayDate = new Date(); %>
        <input name="due" type=date value="<%= opp.expiration %>" min="2023-04-12" max="<%= endDate %>">
    </label></p>
 
 
-   <p><label>Referral Link (Optional): <input type=text name="<%= opp.referralLink %>"></label></p>
+   <p><label>Referral Link (optional): <input type=text name="<%= opp.referralLink %>"></label></p>
 
 
    <p><label>Description (optional):

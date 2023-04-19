@@ -12,7 +12,6 @@
     <%- include("partials/navbar.ejs") %>
     <h1><%= post.name %></h1>
     
-    <p><%= post.link %></p>
     <p><%= post.type %></p>
     <p><%= post.org %></p>
     <p><%= post.subfield %></p>
@@ -44,8 +43,8 @@
 
     <%- include("partials/commentForm.ejs") %>
 
-    <% if (author == True) { %>
-        <a href=`/post/update/<%= post.oid %>` class='button'> Edit this post</a>
+    <% if (post.addedBy.name == userName) { %>
+        <a href="/post/update/<%= post.oid %>" class='button'> Edit this post</a>
     <% } %>
     
     <!-- load local js -->

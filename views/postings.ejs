@@ -16,14 +16,15 @@
     <ul>
         <% list.forEach( (elt) => {%>
             <li>
-                <div class="container" id="feedBox"> 
-                    <p> <%= elt.name %> </p>
-                    <p> <%= elt.type %> </p>
-                    <p> <%= elt.org %> </p>
-                    <p> <%= elt.location %> </p>
-                </div>
                 <a href="/post/<%= elt.oid %>">
-                    <span class="link"></span>
+                   <div class="container" id="feedBox"> 
+                        <p> <%= elt.name %> </p>
+                        <p> <%= elt.type %> </p>
+                        <p> <%= elt.org %> </p>
+                        <p> <%= elt.location %> </p>
+                    
+                        <%- include("partials/commentForm.ejs") %> 
+                    </div>    
                 </a>
             </li>
         <% }); %>

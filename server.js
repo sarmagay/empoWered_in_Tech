@@ -111,20 +111,19 @@ app.get('/post/:oid', async (req, res) => {
     // need user name and uid for navbar
     let userUID = 1;
     let userName = 'Alexa Halim';
-    // check if current User is same as author of doc
-    let author = true;
-    return res.render('postPage.ejs', {post: opp, author: author, userUID: userUID, userName: userName});
+    return res.render('postPage.ejs', {post: opp[0], userUID: userUID, userName: userName});
 })
 
 app.get('/user/:uid', async (req, res) => {
     // need data from corresponding userProfile
     let currUserUID = parseInt(req.params.uid);
     const db = await Connection.open(mongoUri, EMPOWER);
-    let user = await db.collection(USERS).find({uid: currUserUID}).toArray();
+    let user = await db.collection(USERS).find({uid: currUserUID}).toArray(); //not finding anybody, are we sure the user database has been created?
+    console.log(user);
     // need user name and uid for navbar
     let userUID = 1;
     let userName = 'Alexa Halim';
-    return res.render('userProfile.ejs', {user: user, userUID: userUID, userName: userName});
+    return res.render('userProfile.ejs', {user: user[0], userUID: userUID, userName: userName});
 })
 
 app.get('/post/update/:oid', async (req, res) => {
@@ -135,7 +134,7 @@ app.get('/post/update/:oid', async (req, res) => {
     // need user name and uid for navbar
     let userUID = 1;
     let userName = 'Alexa Halim';
-    return res.render('updateOpp.ejs', {opp: opp, userUID: userUID, userName: userName});
+    return res.render('updateOpp.ejs', {opp: opp[0], userUID: userUID, userName: userName});
 })
 
 // shows how logins might work by setting a value in the session
