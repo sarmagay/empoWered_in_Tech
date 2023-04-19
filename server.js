@@ -54,7 +54,7 @@ app.use(cookieSession({
 
 const DB = process.env.USER;
 const EMPOWER = 'empower';
-const USERS = 'user';
+const USERS = 'users';
 const OPPS = 'opps';
 const WMDB = 'wmdb';
 const STAFF = 'staff';
@@ -81,9 +81,7 @@ app.get('/signUp', (req, res) => {
 })
 
 app.get('/userForm', (req, res) => {
-    let userUID = 1;
-    let userName = 'Alexa Halim';
-    return res.render('userForm.ejs', {userUID: userUID, userName: userName});
+    return res.render('userForm.ejs');
 })
 
 app.get('/postings', async (req, res) => {
@@ -167,6 +165,7 @@ app.post('/user/:uid', (req, res) => {
 app.post('/post/update/:oid', () => {
     let oid = parseInt(req.params.oid);
     // checking if user is author of post
+    // need to write how to update the information with the edits
     res.redirect('/post/' + oid)
 })
 
