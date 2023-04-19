@@ -22,10 +22,12 @@
                         <p> <%= elt.type %> </p>
                         <p> <%= elt.org %> </p>
                         <p> <%= elt.location %> </p>
-                    
-                        <% elt.comments.forEach((comment) => {%> 
-                            <p><%= comment.author %>:<%= comment.content %></p>
+
+                        <% if (elt.comments != null) { %>
+                            <% elt.comments.forEach((comment) => {%> 
+                                <div class="comment"><%= comment.author %>: <%= comment.content %></div>
                             <% }); %>
+                        <% }; %>
                     </div>    
                 </a>
             </li>

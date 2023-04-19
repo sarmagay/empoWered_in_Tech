@@ -37,7 +37,7 @@
 
     <p>Comments: <% if (post.comments != null) { %>
         <ul><% post.comments.forEach ((elt) => { %>
-            <li> <%= elt.author %>:<%= elt.content %></li>
+            <li> <%= elt.author %>: <%= elt.content %></li>
         <% });}; %>
         </ul>
 
