@@ -13,7 +13,7 @@
 <form class="form"
      id="userForm"
      method="POST"
-     action="https://cs.wellesley.edu/~cs304flask/cgi-bin/dump.cgi"> <!--CHANGE THIS-->
+     action="/userForm"> <!--CHANGE THIS-->
    <p><label>Full name: <input name="fullName" value="Wendy Wellesley" required></label></p>
 
 
@@ -33,10 +33,6 @@
        <option value="affiliate">Other Affiliate</option>
    </select>
    </label></p>
-
-
-   <p><label>Interest: <input type=text name="org" value="Starbucks" required></label></p>
-
 
    <!-- <p><label>Opportunity Subfield:
        <select name="oppSubfield" required>
@@ -61,19 +57,19 @@
    <div id="interestTypeDropdown" class="dropdown-check-list" tabindex="100">
        <span class="interestType">Choose Interest(s)</span>
        <ul class="items">
-         <li><input type="checkbox" value="bioinformatics"/>Bioinformatics </li>
-         <li><input type="checkbox" value="cloud"/>Cloud Computing/Development</li>
-         <li><input type="checkbox" value="compVision"/>Computer Vision</option </li>
-         <li><input type="checkbox" value="dataScience"/>Data Science </li>
-         <li><input type="checkbox" value="graphics"/>Graphics </li>
-         <li><input type="checkbox" value="hci"/>Human-Computer Interaction </li>
-         <li><input type="checkbox" value="ml"/>Machine Learning</li>
-         <li><input type="checkbox" value="prodDesign"/>Product Design</li>
-         <li><input type="checkbox" value="prodMgmt"/>Product Management</li>
-         <li><input type="checkbox" value="swe"/>Software Engineering</li>
-         <li><input type="checkbox" value="systems"/>Systems</li>
-         <li><input type="checkbox" value="uiux"/>UI/UX</li>
-         <li><input type="checkbox" value="other"/>Other</li>
+         <li><input type="checkbox" name="industry" value="bioinformatics"/>Bioinformatics </li>
+         <li><input type="checkbox" name="industry" value="cloud"/>Cloud Computing/Development</li>
+         <li><input type="checkbox" name="industry" value="compVision"/>Computer Vision</option </li>
+         <li><input type="checkbox" name="industry" value="dataScience"/>Data Science </li>
+         <li><input type="checkbox" name="industry" value="graphics"/>Graphics </li>
+         <li><input type="checkbox" name="industry" value="hci"/>Human-Computer Interaction </li>
+         <li><input type="checkbox" name="industry" value="ml"/>Machine Learning</li>
+         <li><input type="checkbox" name="industry" value="prodDesign"/>Product Design</li>
+         <li><input type="checkbox" name="industry" value="prodMgmt"/>Product Management</li>
+         <li><input type="checkbox" name="industry" value="swe"/>Software Engineering</li>
+         <li><input type="checkbox" name="industry" value="systems"/>Systems</li>
+         <li><input type="checkbox" name="industry" value="uiux"/>UI/UX</li>
+         <li><input type="checkbox" name="industry" value="other"/>Other</li>
        </ul>
      </div>
 
@@ -84,8 +80,8 @@
    <p><label>Class Year (optional): <input type=text name="classYear" value="2020"></label></p>
 
 
-   <p><label>Major(s) (optional): <input type=text name="majors" value="Computer Science"></label></p>
-   <p><label>Minor(s) (optional): <input type=text name="minors" value="Art History"></label></p>
+   <p><label>Major(s) (optional): <input type=text name="majors" value="Computer Science, Economics"></label></p>
+   <p><label>Minor (optional): <input type=text name="minors" value="Art History"></label></p>
 
 
    <p><button type="submit">Post!</button></p>
