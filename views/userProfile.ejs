@@ -14,7 +14,7 @@
     <form class="form"
      id="userForm"
      method="POST"
-     action="https://cs.wellesley.edu/~cs304flask/cgi-bin/dump.cgi"> <!--CHANGE THIS-->
+     action="/user/:<%= user.uid %>"> <!--CHANGE THIS-->
         <p><label>Full name: <input name="fullName" value="<%= user.name %>" required></label></p>
 
         <p><label>Username: <input name="Username" value="<%= user.uid %>" required></label></p>
@@ -31,8 +31,6 @@
                 <option value="affiliate">Other Affiliate</option>
             </select>
         </label></p>
-
-        <p><label>Interest: <input type=text name="org" value="<%= user.industry %>" required></label></p>
 
         <div id="interestTypeDropdown" class="dropdown-check-list" tabindex="100">
             <span class="interestType">Choose Interest(s)</span>

@@ -157,7 +157,7 @@ app.post('/oppForm', (req, res) => {
     res.redirect('/post/' + oid)
 })
 
-app.post('/user/:uid', (req, res) => {
+app.post('/user/<%= user.uid %>', (req, res) => {
     let uid = parseInt(req.params.uid);
     res.redirect('/user/' + uid)
 })
