@@ -146,9 +146,37 @@ app.post('/signUp', (req, res) => {
     res.redirect('/userForm/');
 })
 
-app.post('/userForm', (req, res) => {
+app.post('/userForm', async (req, res) => {
     // make sure necessary fields are filled
+    console.log(req.body);
+    let name = req.body.fullName;
     let uid = req.body.uid;
+    let email = req.body.email;
+    let status = req.body.userStatus;
+    let org = req.body.org;
+    let industry = req.body.industry;
+    let year = parseInt(req.body.classYear);
+    let majors = req.body.majors.split(", ")
+    let minors = req.body.minors;
+    const db = await Connection.open(mongoUri, EMPOWER);
+    const inserted = await db.collection(USERS).updateOne(
+        {uid: uid},
+        { $setOnInsert:
+            {
+                uid: uid,
+                name: name,
+                email: email,
+                status: status,
+                classYear: year,
+                major: majors,
+                minor: minors,
+                industry: industry,
+                favorited: [],
+            }
+        },
+        { upsert: true }
+    )
+    console.log(inserted);
     res.redirect('user/' + uid);
 })
 
@@ -157,8 +185,8 @@ app.post('/oppForm', (req, res) => {
     res.redirect('/post/' + oid)
 })
 
-app.post('/user/<%= user.uid %>', (req, res) => {
-    let uid = parseInt(req.params.uid);
+app.post('/user/:<%= user.uid %>', (req, res) => {
+    let uid = req.params.uid;
     res.redirect('/user/' + uid)
 })
 
