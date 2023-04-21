@@ -23,12 +23,20 @@
 
         <p><label>User status:
             <select name="userStatus" value="<%= user.status %>" required>
-                <option value=""><%= user.status %></option>
-                <option value="alumn">Alumn</option>
-                <option value="professor">Professor</option>
-                <option value="staff">Staff</option>
-                <option value="student">Student</option>
-                <option value="affiliate">Other Affiliate</option>
+                <option value="<%= user.status %>"><%= user.status %></option>
+                <% statuses.forEach((status) => { %>
+                    <% if (user.status != status) { %>
+                        <option value="<%= status %>"><%= status %></option>
+                    <% } %>
+                <% }); %>
+                <!--
+                    <option value=""><%= user.status %></option>
+                    <option value="Alumn">Alumn</option>
+                    <option value="Professor">Professor</option>
+                    <option value="Staff">Staff</option>
+                    <option value="Student">Student</option>
+                    <option value="Affiliate">Other Affiliate</option>
+                -->
             </select>
         </label></p>
 
