@@ -42,20 +42,23 @@
 
    <div id="oppSubfieldDropdown" class="dropdown-check-list" tabindex="100">
        <span class="oppSubfield">Choose Opportunity Subfield(s):</span>
-       <ul class="items">
-         <li><input type="checkbox" value="bioinformatics"/>Bioinformatics </li>
-         <li><input type="checkbox" value="cloud"/>Cloud Computing/Development</li>
-         <li><input type="checkbox" value="compVision"/>Computer Vision</option> </li>
-         <li><input type="checkbox" value="dataScience"/>Data Science </li>
-         <li><input type="checkbox" value="graphics"/>Graphics </li>
-         <li><input type="checkbox" value="hci"/>Human-Computer Interaction </li>
-         <li><input type="checkbox" value="ml"/>Machine Learning</li>
-         <li><input type="checkbox" value="prodDesign"/>Product Design</li>
-         <li><input type="checkbox" value="prodMgmt"/>Product Management</li>
-         <li><input type="checkbox" value="swe"/>Software Engineering</li>
-         <li><input type="checkbox" value="systems"/>Systems</li>
-         <li><input type="checkbox" value="uiux"/>UI/UX</li>
-         <li><input type="checkbox" value="other"/>Other</li>
+       <ul class="items"> <%# opp.subfield which is an array, want to loop through it %>
+        <%# for el in opp.subfield:  %>
+         <li><input type="checkbox" name ="subfield" value="bioinformatics"/>Bioinformatics </li>
+         <%# checked versioon %>
+         <%# <li><input type="checkbox" name ="subfield" value="bioinformatics" checked/>Bioinformatics </li> %>
+         <li><input type="checkbox" name ="subfield" value="cloud"/>Cloud Computing/Development</li>
+         <li><input type="checkbox" name ="subfield" value="compVision"/>Computer Vision</option> </li>
+         <li><input type="checkbox" name ="subfield" value="dataScience"/>Data Science </li>
+         <li><input type="checkbox" name ="subfield" value="graphics"/>Graphics </li>
+         <li><input type="checkbox" name ="subfield" value="hci"/>Human-Computer Interaction </li>
+         <li><input type="checkbox" name ="subfield" value="ml"/>Machine Learning</li>
+         <li><input type="checkbox" name ="subfield" value="prodDesign"/>Product Design</li>
+         <li><input type="checkbox" name ="subfield" value="prodMgmt"/>Product Management</li>
+         <li><input type="checkbox" name ="subfield" value="swe"/>Software Engineering</li>
+         <li><input type="checkbox" name ="subfield" value="systems"/>Systems</li>
+         <li><input type="checkbox" name ="subfield" value="uiux"/>UI/UX</li>
+         <li><input type="checkbox" name ="subfield" value="other"/>Other</li>
        </ul>
      </div>
 

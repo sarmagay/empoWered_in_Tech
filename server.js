@@ -114,14 +114,14 @@ app.get('/post/:oid', async (req, res) => {
 
 app.get('/user/:uid', async (req, res) => {
     // need data from corresponding userProfile
-    let currUserUID = parseInt(req.params.uid);
+    let currUserUID = req.params.uid;
     const db = await Connection.open(mongoUri, EMPOWER);
     let user = await db.collection(USERS).find({uid: currUserUID}).toArray(); //not finding anybody, are we sure the user database has been created?
     console.log(user);
     // need user name and uid for navbar
     let userUID = 1;
     let userName = 'Alexa Halim';
-    return res.render('userProfile.ejs', {user: user[0], userUID: userUID, userName: userName});
+    return res.render('userProfile.ejs', {user: user[0], userUID: userUID, userName: userName, statuses: ["Alumn", "Professor", "Staff", "Student", "Affiliate"]});
 })
 
 app.get('/post/update/:oid', async (req, res) => {
@@ -146,10 +146,37 @@ app.post('/signUp', (req, res) => {
     res.redirect('/userForm/');
 })
 
-app.post('/userForm', (req, res) => {
+app.post('/userForm', async (req, res) => {
     // make sure necessary fields are filled
+    console.log(req.body);
+    let name = req.body.fullName;
     let uid = req.body.uid;
-    res.redirect('user/' + uid);
+    let email = req.body.email;
+    let status = req.body.userStatus;
+    let industry = req.body.industry;
+    let year = parseInt(req.body.classYear);
+    let majors = req.body.majors.split(", ")
+    let minors = req.body.minors;
+    const db = await Connection.open(mongoUri, EMPOWER);
+    const inserted = await db.collection(USERS).updateOne(
+        {uid: uid},
+        { $setOnInsert:
+            {
+                uid: uid,
+                name: name,
+                email: email,
+                status: status,
+                classYear: year,
+                major: majors,
+                minor: minors,
+                industry: industry,
+                favorited: [],
+            }
+        },
+        { upsert: true }
+    )
+    console.log(inserted);
+    res.redirect('/user/' + uid);
 })
 
 app.post('/oppForm', async (req, res) => {
@@ -203,9 +230,34 @@ app.post('/oppForm', async (req, res) => {
 
 app.post('')
 
-app.post('/user/:uid', (req, res) => {
-    let uid = parseInt(req.params.uid);
-    res.redirect('/user/' + uid)
+app.post('/user/:uid', async (req, res) => {
+    let uid = req.params.uid;
+    console.log(req.body);
+    let name = req.body.fullName;
+    let newUid = req.body.Username;
+    let email = req.body.email;
+    let status = req.body.userStatus;
+    let industry = req.body.industry;
+    let year = parseInt(req.body.classYear);
+    let majors = req.body.majors.split(", ")
+    let minors = req.body.minors;
+    const db = await Connection.open(mongoUri, EMPOWER);
+    const edited = await db.collection(USERS).updateOne(
+        {uid: uid},
+        { $set:
+            {
+                uid: newUid,
+                name: name,
+                email: email,
+                status: status,
+                classYear: year,
+                major: majors,
+                minor: minors,
+                industry: industry,
+            }
+        });
+    console.log(edited.acknowledged);
+    res.redirect('/user/' + newUid);
 })
 
 app.post('/post/update/:oid', () => {
