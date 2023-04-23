@@ -273,7 +273,7 @@ app.post('/post/delete/:oid', async (req, res) => {
     const deletion = await db.collection(OPPS).deleteOne({oid: oppID});
     console.log(deletion.acknowledged);
     // req.flash(`info`, `Opportunity (${oppID}) was deleted successfully.`);
-    return res.redirect("/");
+    return res.redirect("/postings");
 });
 
 app.post('/post/update/:oid', () => {
