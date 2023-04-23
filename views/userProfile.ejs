@@ -17,7 +17,7 @@
      action="/user/:<%= user.uid %>"> <!--CHANGE THIS-->
         <p><label>Full name: <input name="fullName" value="<%= user.name %>" required></label></p>
 
-        <p><label>Username: <input name="Username" value="<%= user.uid %>" required></label></p>
+        <p>Username: <%= user.uid %></p>
 
         <p><label>Wellesley email: <input name="email" value="<%= user.email %>" required></label></p>
 
@@ -60,14 +60,22 @@
         </div>
 
         <p><label>If "Other", please specify: <input type=text name="otherInterest"></label></p>
-
-        <p><label>Class Year (optional): <input type=text name="classYear" value="<%= user.classYear %>"></label></p>
+        
+        <% if (user.classYear != NaN) { %>
+            <p><label>Class Year (optional): <input type=text name="classYear" value="<%= user.classYear %>"></label></p>
+        <% } else { %>
+            <p><label>Class Year (optional): <input type=text name="classYear" value=""></label></p>
+        <% } %>
 
         <p><label>Major(s) (optional): <input type=text name="majors" value="<%= user.major %>"></label></p>
         <p><label>Minor(s) (optional): <input type=text name="minors" value="<%= user.minor %>"></label></p>
 
         <p><button type="submit">Update Profile</button></p>
     </form>
+
+    <form method="POST" action="/user/delete/<%=user.uid%>">
+        <input type="submit" value="delete <%=user.uid%>">
+    </form>  
 
     <script src="/main.js"></script>
 </body>

@@ -228,13 +228,10 @@ app.post('/oppForm', async (req, res) => {
     }
 })
 
-app.post('')
-
 app.post('/user/:uid', async (req, res) => {
     let uid = req.params.uid;
     console.log(req.body);
     let name = req.body.fullName;
-    let newUid = req.body.Username;
     let email = req.body.email;
     let status = req.body.userStatus;
     let industry = req.body.industry;
@@ -246,7 +243,6 @@ app.post('/user/:uid', async (req, res) => {
         {uid: uid},
         { $set:
             {
-                uid: newUid,
                 name: name,
                 email: email,
                 status: status,
@@ -256,8 +252,17 @@ app.post('/user/:uid', async (req, res) => {
                 industry: industry,
             }
         });
-    console.log(edited.acknowledged);
-    res.redirect('/user/' + newUid);
+    console.log(edited);
+    res.redirect('/user/' + uid);
+})
+
+app.post('/user/delete/:uid', async (req, res) => {
+    const userUID = req.params.uid;
+    const db = await Connection.open(mongoUri, EMPOWER);
+    const deletion = await db.collection(USERS).deleteOne({uid: userUID});
+    console.log(deletion.acknowledged);
+    // req.flash(`info`, `User (${userUID}) was deleted successfully.`);
+    return res.redirect("/");
 })
 
 app.post('/post/update/:oid', () => {
