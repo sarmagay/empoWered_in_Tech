@@ -152,10 +152,56 @@ app.post('/userForm', (req, res) => {
     res.redirect('user/' + uid);
 })
 
-app.post('/oppForm', (req, res) => {
+app.post('/oppForm', async (req, res) => {
+    console.log(req.body);
+    let name = req.body.opportunityName;
     let oid = req.body.oid;
-    res.redirect('/post/' + oid)
+    let location = req.body.location;
+    let type = req.body.oppType;
+    let org = req.body.org;
+    let subfield = null; // multiple things
+    let appLink = req.body.applicationLink;
+    let spam = req.body.spam; //
+    let expiration = req.body.due; //
+    let refLink = req.body.referralLink; //
+    let description = req.body.description; //
+    let addedBy = req.body.addedBy;
+
+    const db = await Connection.open(mongoUri, EMPOWER);
+    const opps = await db.collection(OPPS);
+    let inserted = await opps.updateOne(
+        { oid: oid },
+        { $setOnInsert: 
+            {
+                name: name,
+                oid: oid, 
+                location: location,
+                type: type,
+                org: org,
+                subfield: subfield,
+                link: appLink,
+                spam: spam,
+                expiration: expiration,
+                referralLink: refLink,
+                description: description,
+                addedBy: addedBy,
+                comments: null
+            }
+        },
+        { upsert: true }
+    )
+    if (inserted.upsertedCount == 1) {
+        // opp successfully inserted --> redirect to post
+        return res.redirect('/post/' + oid)
+    }
+    else {
+        // oid in use --> flash error, rerender form page
+        req.flash('error', `Opportunity with oid ${oid} is already in our database!`)
+        return res.render('oppForm.ejs');
+    }
 })
+
+app.post('')
 
 app.post('/user/:uid', (req, res) => {
     let uid = parseInt(req.params.uid);
