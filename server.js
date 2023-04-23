@@ -265,6 +265,15 @@ app.post('/user/delete/:uid', async (req, res) => {
     return res.redirect("/");
 })
 
+app.post('/post/delete/:oid', async (req, res) => {
+    const oppID = req.params.oid;
+    const db = await Connection.open(mongoUri, EMPOWER);
+    const deletion = await db.collection(OPPS).deleteOne({oid: oppID});
+    console.log(deletion.acknowledged);
+    // req.flash(`info`, `Opportunity (${oppID}) was deleted successfully.`);
+    return res.redirect("/");
+});
+
 app.post('/post/update/:oid', () => {
     let oid = parseInt(req.params.oid);
     // checking if user is author of post

@@ -14,7 +14,7 @@
 <form class="form"
      id="opportunityForm"
      method="POST"
-     action="https://cs.wellesley.edu/~cs304flask/cgi-bin/dump.cgi"> <!--CHANGE THIS-->
+     action="post/update/:<%= opp.oid %>"> <!--CHANGE THIS-->
    <p><label>Opportunity Name: <input name="opportunityName" value="<%= opp.name %>" required></label></p>
 
 
@@ -95,6 +95,10 @@
    <%- include("partials/commentForm.ejs") %>
    <p><button type="submit">Update!</button></p>
 </form>
+
+<form method="POST" action="/post/delete/<%=opp.oid%>">
+    <input type="submit" value="delete <%=opp.oid%>">
+</form>  
 
 </body>
 </html>
