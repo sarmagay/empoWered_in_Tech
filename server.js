@@ -154,7 +154,7 @@ app.post('/userForm', async (req, res) => {
     let email = req.body.email;
     let status = req.body.userStatus;
     let industry = req.body.industry;
-    let year = parseInt(req.body.classYear);
+    let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
     let majors = req.body.majors.split(", ")
     let minors = req.body.minors;
     const db = await Connection.open(mongoUri, EMPOWER);
@@ -235,7 +235,7 @@ app.post('/user/:uid', async (req, res) => {
     let email = req.body.email;
     let status = req.body.userStatus;
     let industry = req.body.industry;
-    let year = parseInt(req.body.classYear);
+    let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
     let majors = req.body.majors.split(", ")
     let minors = req.body.minors;
     const db = await Connection.open(mongoUri, EMPOWER);
@@ -253,7 +253,9 @@ app.post('/user/:uid', async (req, res) => {
             }
         });
     console.log(edited);
-    res.redirect('/user/' + uid);
+    let updatedUser = await db.collection(USERS).find({uid: uid}).toArray();
+    console.log(updatedUser[0]); // shows up as undefined
+    res.redirect('/user/' + uid); // goes to correct link tho
 })
 
 app.post('/user/delete/:uid', async (req, res) => {
