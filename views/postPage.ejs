@@ -33,7 +33,7 @@
         <p><%=post.description%></p>
         <% } %></p></p>
 
-    <p>Added by <%=post.addedBy.name%></p>
+    <p>Added by <%=addedBy.name%>, <%= addedBy.email %></p>
 
     <p>Comments: <% if (post.comments != null) { %>
         <ul><% post.comments.forEach ((elt) => { %>
@@ -43,7 +43,7 @@
 
     <%- include("partials/commentForm.ejs") %>
 
-    <% if (post.addedBy.name == userName) { %>
+    <% if (addedBy.name == userName) { %>
         <a href="/post/update/<%= post.oid %>" class='button'> Edit this post</a>
     <% } %>
     

@@ -135,10 +135,14 @@ app.get('/post/:oid', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
     let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
     console.log(opp);
+    let addedByUID = opp[0].addedBy;
+    console.log(addedByUID);
+    let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
+    console.log(addedBy);
     // need user name and uid for navbar
     let userUID = 1;
     let userName = 'Alexa Halim';
-    return res.render('postPage.ejs', {post: opp[0], userUID: userUID, userName: userName});
+    return res.render('postPage.ejs', {post: opp[0], addedBy: addedBy[0], userUID: userUID, userName: userName});
 })
 
 app.get('/user/:uid', async (req, res) => {
