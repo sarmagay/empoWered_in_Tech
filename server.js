@@ -94,6 +94,33 @@ app.get('/postings', async (req, res) => {
     return res.render('postings.ejs', {list: allOpps, userUID: userUID, userName: userName});
 })
 
+app.get('/do-postings', async (req, res) => {
+    const db = await Connection.open(mongoUri, EMPOWER);
+    let showOpps = await db.collection(OPPS).find({}).toArray();
+    let btnClicked = req.query.button;
+    if (btnClicked == "allOpBtn"){
+        showOpps = await db.collection(OPPS).find({}).toArray();
+    }
+    else if (btnClicked == "internshipBtn"){
+        showOpps = await db.collection(OPPS).find({type:{$regex: /internship/i }}).toArray();
+    }
+    else if (btnClicked == "jobBtn"){
+        showOpps = await db.collection(OPPS).find({type:{$regex: /job/i }}).toArray();
+    }
+    else if (btnClicked == "researchBtn"){
+        showOpps = await db.collection(OPPS).find({type:{$regex: /research/i }}).toArray();
+    }
+    else if (btnClicked == "remoteBtn"){
+        showOpps = await db.collection(OPPS).find({location:{$regex: /remote/i }}).toArray();
+    }
+
+    // let currentUser = await db.collection(USERS).find({}).toArray(); // must figure out how to find currentUser
+    let userUID = 1;
+    let userName = 'Alexa Halim';
+    // need user name and uid for navbar
+    return res.render('postings.ejs', {list: showOpps, userUID: userUID, userName: userName});
+})
+
 app.get('/oppForm', (req, res) => {
     let userUID = 1;
     let userName = 'Alexa Halim';
