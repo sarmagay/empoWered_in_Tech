@@ -14,7 +14,7 @@
     <form class="form"
      id="userForm"
      method="POST"
-     action="/user/:<%= user.uid %>"> <!--CHANGE THIS-->
+     action="/user/<%= user.uid %>"> <!--CHANGE THIS-->
         <p><label>Full name: <input name="fullName" value="<%= user.name %>" required></label></p>
 
         <p>Username: <%= user.uid %></p>
