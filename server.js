@@ -104,8 +104,10 @@ app.get('/oppForm', (req, res) => {
 app.get('/post/:oid', async (req, res) => {
     // need data from corresponding opportunity doc
     let postOID = parseInt(req.params.oid);
+    console.log(postOID);
     const db = await Connection.open(mongoUri, EMPOWER);
     let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
+    console.log(opp);
     // need user name and uid for navbar
     let userUID = 1;
     let userName = 'Alexa Halim';
@@ -182,11 +184,11 @@ app.post('/userForm', async (req, res) => {
 app.post('/oppForm', async (req, res) => {
     console.log(req.body);
     let name = req.body.opportunityName;
-    let oid = req.body.oid;
+    let oid = parseInt(req.body.oid); // how to do if oid is not an integer, how to flash
     let location = req.body.location;
     let type = req.body.oppType;
     let org = req.body.org;
-    let subfield = null; // multiple things
+    let subfield = req.body.subfield; // multiple things
     let appLink = req.body.applicationLink;
     let spam = req.body.spam; //
     let expiration = req.body.due; //
@@ -217,6 +219,7 @@ app.post('/oppForm', async (req, res) => {
         },
         { upsert: true }
     )
+    console.log(inserted);
     if (inserted.upsertedCount == 1) {
         // opp successfully inserted --> redirect to post
         return res.redirect('/post/' + oid)
