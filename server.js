@@ -126,15 +126,19 @@ app.get('/user/:uid', async (req, res) => {
     return res.render('userProfile.ejs', {user: user[0], userUID: userUID, userName: userName, statuses: ["Alumn", "Professor", "Staff", "Student", "Affiliate"]});
 })
 
-app.get('/post/update/:oid', async (req, res) => {
+app.get('/updatePost/:oid', async (req, res) => {
     // need data from corresponding opportunity doc
     let postOID = parseInt(req.params.oid);
     const db = await Connection.open(mongoUri, EMPOWER);
     let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
+    let addedByUID = opp[0].addedBy;
+    console.log(addedByUID);
+    let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
+    console.log(addedBy);
     // need user name and uid for navbar
     let userUID = 1;
     let userName = 'Alexa Halim';
-    return res.render('updateOpp.ejs', {opp: opp[0], userUID: userUID, userName: userName});
+    return res.render('updateOpp.ejs', {opp: opp[0], addedBy: addedBy[0], userUID: userUID, userName: userName});
 })
 
 // shows how logins might work by setting a value in the session
@@ -192,7 +196,7 @@ app.post('/oppForm', async (req, res) => {
     let appLink = req.body.applicationLink;
     let spam = req.body.spam; //
     let expiration = req.body.due; //
-    let refLink = req.body.referralLink; //
+    let refLink = req.body.referralLink; // is this the right name?
     let description = req.body.description; //
     let addedBy = req.body.addedBy;
 
@@ -279,11 +283,47 @@ app.post('/post/delete/:oid', async (req, res) => {
     return res.redirect("/postings");
 });
 
-app.post('/post/update/:oid', () => {
+app.post('/updatePost/:oid', async (req, res) => {
     let oid = parseInt(req.params.oid);
     // checking if user is author of post
+    let userUID = 1;
+    let userName = 'Alexa Halim';
     // need to write how to update the information with the edits
-    res.redirect('/post/' + oid)
+    console.log(req.body);
+    let name = req.body.opportunityName;
+    let location = req.body.location;
+    let type = req.body.oppType;
+    let otherType = req.body.otherOppType; // if there's something here, this should be what renders
+    let org = req.body.org;
+    let subfield = req.body.subfield
+    let otherSubfield = req.body.otherOppSubfield; // same as other "other"
+    let appLink = req.body.applicationLink;
+    let refLink; // confused on what the name is
+    let expiration = req.body.due;
+    let description = req.body.description;
+
+    const db = await Connection.open(mongoUri, EMPOWER);
+    const edited = await db.collection(OPPS).updateOne(
+        {oid: oid},
+        { $set:
+            {
+                name: name,
+                location: location,
+                type: type,
+                org: org,
+                subfield: subfield,
+                link: appLink,
+                expiration: expiration,
+                referralLink: refLink,
+                description: description,
+            }
+        });
+    console.log(edited);
+    let updatedOpp = await db.collection(OPPS).find({oid: oid}).toArray();
+    console.log(updatedOpp[0]); // shows up as undefined
+    let addedByUID = updatedOpp[0].addedBy;
+    let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
+    res.render('updateOpp.ejs', {opp: updatedOpp[0], addedBy: addedBy[0], userUID: userUID, userName: userName})
 })
 
 app.post('/set-uid/', (req, res) => {

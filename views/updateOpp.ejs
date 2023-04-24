@@ -14,7 +14,7 @@
 <form class="form"
      id="opportunityForm"
      method="POST"
-     action="post/update/:<%= opp.oid %>"> <!--CHANGE THIS-->
+     action="/updatePost/<%= opp.oid %>">
    <p><label>Opportunity Name: <input name="opportunityName" value="<%= opp.name %>" required></label></p>
 
 
@@ -88,11 +88,8 @@
    </label></p>
 
 
-   <p><label>Your Username: <input type=text name="addedBy" value="<%= opp.addedBy.name %>" required></label></p>
+   <p>Your Username: <%= addedBy.name %>, <%= addedBy.email %></p>
 
-
-
-   <%- include("partials/commentForm.ejs") %>
    <p><button type="submit">Update!</button></p>
 </form>
 
