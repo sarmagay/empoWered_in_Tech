@@ -122,7 +122,7 @@ app.get('/do-postings', async (req, res) => {
 })
 
 app.get('/oppForm', (req, res) => {
-    let userUID = 1;
+    let userUID = "1";
     let userName = 'Alexa Halim';
     // need user name and uid for navbar
     return res.render('oppForm.ejs', {userUID: userUID, userName: userName});
@@ -152,7 +152,7 @@ app.get('/user/:uid', async (req, res) => {
     let user = await db.collection(USERS).find({uid: currUserUID}).toArray(); //not finding anybody, are we sure the user database has been created?
     console.log(user);
     // need user name and uid for navbar
-    let userUID = 1;
+    let userUID = "1";
     let userName = 'Alexa Halim';
     return res.render('userProfile.ejs', {user: user[0], userUID: userUID, userName: userName, statuses: ["Alumn", "Professor", "Staff", "Student", "Affiliate"]});
 })
@@ -167,7 +167,7 @@ app.get('/updatePost/:oid', async (req, res) => {
     let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
     console.log(addedBy);
     // need user name and uid for navbar
-    let userUID = 1;
+    let userUID = "1";
     let userName = 'Alexa Halim';
     return res.render('updateOpp.ejs', {opp: opp[0], addedBy: addedBy[0], userUID: userUID, userName: userName});
 })
