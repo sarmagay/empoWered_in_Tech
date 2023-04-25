@@ -135,7 +135,7 @@ app.get('/post/:oid', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
     let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
     console.log(opp);
-    let addedByUID = opp[0].addedBy;
+    let addedByUID = opp[0].addedBy.uid;
     console.log(addedByUID);
     let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
     console.log(addedBy);
@@ -162,7 +162,7 @@ app.get('/updatePost/:oid', async (req, res) => {
     let postOID = parseInt(req.params.oid);
     const db = await Connection.open(mongoUri, EMPOWER);
     let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
-    let addedByUID = opp[0].addedBy;
+    let addedByUID = opp[0].addedBy.uid;
     console.log(addedByUID);
     let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
     console.log(addedBy);
@@ -229,10 +229,11 @@ app.post('/oppForm', async (req, res) => {
     let expiration = req.body.due; //
     let refLink = req.body.referralLink; // is this the right name?
     let description = req.body.description; //
-    let addedBy = req.body.addedBy;
+    let addedByUID = req.body.addedBy;
 
     const db = await Connection.open(mongoUri, EMPOWER);
     const opps = await db.collection(OPPS);
+    let addedByName = await db.collection(USERS).find({uid: addedByUID}).toArray();
     let inserted = await opps.updateOne(
         { oid: oid },
         { $setOnInsert: 
@@ -248,7 +249,7 @@ app.post('/oppForm', async (req, res) => {
                 expiration: expiration,
                 referralLink: refLink,
                 description: description,
-                addedBy: addedBy,
+                addedBy: {uid: addedByUID, name: addedByName},
                 comments: null
             }
         },
