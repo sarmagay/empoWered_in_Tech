@@ -181,10 +181,17 @@ app.post('/login', (req, res) => {
 })
 
 app.post('/signUp', async (req, res) => {
-    res.render('userForm.ejs', {email: uname});
-
-    let email = await DB.collection().findOne(email: uname)
-
+    let email = req.body.uname;
+    let users = await DB.collection(USERS).find({email: email}).toArray();
+    if (users.length != 0) {
+        req.flash('error', `User with email ${email} already in use! Please log in.`)
+    }
+    else if (email != '@wellesley.edu') {
+        pass
+    }
+    else {
+        res.render('userForm.ejs', {email: uname}); 
+    }
 })
 
 app.post('/userForm', async (req, res) => {
