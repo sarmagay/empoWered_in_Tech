@@ -176,7 +176,6 @@ app.get('/updatePost/:oid', async (req, res) => {
 // This is a conventional, non-Ajax, login, so it redirects to main page 
 app.post('/login', async (req, res) => {
     try {
-        let visits = req.session.visits || 0;
         const email = req.body.uname;
         const db = await Connection.open(mongoUri, EMPOWER);
         var existingUID = await db.collection(USERS).findOne({email: email});
@@ -193,12 +192,13 @@ app.post('/login', async (req, res) => {
             req.session.visits = 1;
             req.session.logged_in = true;
             // eventually, flash and redirect to /visit
-            return res.send(`<p>Logged in as ${name} (${email}). <a href="/visit">visit</a>`);
+            req.flash('info', `<p>Logged in as ${name} (${email}). <a href="/postings">enter</a>`);
+            return res.redirect('/postings');
         }
       } catch (error) {
-          return res.send(`Form submission error: ${error}`)
+          req.flash('error', `Form submission error: ${error}`);
+          return res.redirect('/login');
       }
-    res.redirect('/postings'); // where does this go?
 })
 
 app.post('/signUp', async (req, res) => {
@@ -419,10 +419,12 @@ app.post('/logout', (req,res) => {
       req.session.name = null;
       req.session.logged_in = false;
         // eventually, flash and redirect to /
-        return res.send(`<p>Logged out. <a href="/">home</a></p>`);
+        req.flash('info', `<p>Logged out.`);
+        return res.redirect('/')
     } else {
         // eventually, flash and redirect to /
-        return res.send(`<p>You are not logged in; please login: <a href="/">home</a></p>`);
+        req.flash('error', `<p>You are not logged in; please login.`);
+        return res.redirect('/login');
     }
   });
 
