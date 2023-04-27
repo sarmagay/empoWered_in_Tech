@@ -56,8 +56,7 @@ const DB = process.env.USER;
 const EMPOWER = 'empower';
 const USERS = 'users';
 const OPPS = 'opps';
-const WMDB = 'wmdb';
-const STAFF = 'staff';
+
 
 // main page. This shows the use of session cookies
 app.get('/', (req, res) => {
@@ -80,9 +79,11 @@ app.get('/signUp', (req, res) => {
     return res.render('signUp.ejs');
 })
 
+// delete once user sessions are figured out
 app.get('/userForm', (req, res) => {
     return res.render('userForm.ejs');
 })
+
 
 app.get('/postings', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
@@ -179,8 +180,11 @@ app.post('/login', (req, res) => {
     res.redirect('/postings');
 })
 
-app.post('/signUp', (req, res) => {
-    res.redirect('/userForm/');
+app.post('/signUp', async (req, res) => {
+    res.render('userForm.ejs', {email: uname});
+
+    let email = await DB.collection().findOne(email: uname)
+
 })
 
 app.post('/userForm', async (req, res) => {
@@ -188,7 +192,7 @@ app.post('/userForm', async (req, res) => {
     console.log(req.body);
     let name = req.body.fullName;
     let uid = req.body.uid;
-    let email = req.body.email;
+    // let email = req.body.email;
     let status = req.body.userStatus;
     let industry = req.body.industry;
     let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
@@ -196,12 +200,12 @@ app.post('/userForm', async (req, res) => {
     let minors = req.body.minors;
     const db = await Connection.open(mongoUri, EMPOWER);
     const inserted = await db.collection(USERS).updateOne(
-        {uid: uid},
+        {uid: uid}, // changed to email. how do we do that?ß
         { $setOnInsert:
             {
                 uid: uid,
                 name: name,
-                email: email,
+                // email: email,
                 status: status,
                 classYear: year,
                 major: majors,
