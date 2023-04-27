@@ -20,6 +20,7 @@ const multer = require('multer');
 
 const { Connection } = require('./connection'); // Olivia's module
 const cs304 = require('./cs304');
+const { slice } = require('lodash');
 
 // Create and configure the app
 
@@ -175,10 +176,30 @@ app.get('/updatePost/:oid', async (req, res) => {
 
 // shows how logins might work by setting a value in the session
 // This is a conventional, non-Ajax, login, so it redirects to main page 
-app.post('/login', (req, res) => {
-    // adding confirmation of user
-    res.redirect('/postings');
-})
+app.post('/login', async (req, res) => {
+    const db = await Connection.open(mongoUri, DB);
+    try {
+        var username = req.body.uname;
+        var password = req.body.psw;
+        var existingUser = await db.collection(USERS).findOne({email: username});
+        if (!existingUser) {
+            req.flash('error', `User with email ${username} does not exist, please try again.`);
+            return res.redirect('/login');
+        }
+        const match = await bcrypt.compare(password, existingUser.hash);
+        if (!match) {
+            req.flash('error', `Incorrect username or password. Please try again.`);
+            return res.redirect('/login');
+        }
+        req.flash('info', `Logged in as ` + username);
+        req.session.username = username;
+        // req.session.logged_in = true;
+        return res.redirect('/postings');
+    }   catch (error) {
+        req.flash('error', `Something went wrong: ${error}`);
+        return res.redirect('/login');
+    }
+});
 
 app.post('/signUp', async (req, res) => {
     let email = req.body.uname;
@@ -186,11 +207,12 @@ app.post('/signUp', async (req, res) => {
     if (users.length != 0) {
         req.flash('error', `User with email ${email} already in use! Please log in.`)
     }
-    else if (email != '@wellesley.edu') {
-        pass
+    else if (email.slice(-14) != '@wellesley.edu') {
+        req.flash('error', `Error: Email must be a "@wellesley.edu" email!`)
+        return res.render('signUp.ejs');
     }
     else {
-        res.render('userForm.ejs', {email: uname}); 
+        return res.render('userForm.ejs', {email: uname}); 
     }
 })
 
