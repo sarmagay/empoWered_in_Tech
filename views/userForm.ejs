@@ -10,17 +10,19 @@
 </head>
 <body>
     <%- include("partials/simpleNavbar.ejs") %>
+    <%- include("partials/flashes.ejs") %>
+
 <form class="form"
      id="userForm"
      method="POST"
-     action="/userForm"> <!--CHANGE THIS-->
+     action="/userForm">
    <p><label>Full name: <input name="fullName" value="Wendy Wellesley" required></label></p>
 
 
    <p><label>Username: <input name="uid" value="wendy92438" required></label></p>
 
 
-   <p><label>Wellesley email: <input name="email" value="ww102@wellesley.edu" required></label></p>
+   <p>Wellesley email: <%= email %> </p>
 
 
    <p><label>User status:
@@ -33,25 +35,6 @@
        <option value="Affiliate">Other Affiliate</option>
    </select>
    </label></p>
-
-   <!-- <p><label>Opportunity Subfield:
-       <select name="oppSubfield" required>
-       <option value="">Choose Subfield</option>
-       <option value="bioinformatics">Bioinformatics</option>
-       <option value="cloud">Cloud Computing/Development</option>
-       <option value="compVision">Computer Vision</option>
-       <option value="dataScience">Data Science</option>
-       <option value="graphics">Graphics</option>
-       <option value="hci">Human-Computer Interaction</option>
-       <option value="ml">Machine Learning</option>
-       <option value="product">Product Design</option>
-       <option value="product">Product Management</option>
-       <option value="swe">Software Engineering</option>
-       <option value="systems">Systems</option>
-       <option value="uiux">UI/UX</option>
-       <option value="other">Other</option>
-       </select>
-   </label></p> -->
 
 
    <div id="interestTypeDropdown" class="dropdown-check-list" tabindex="100">

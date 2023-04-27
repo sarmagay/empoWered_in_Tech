@@ -20,6 +20,7 @@ const multer = require('multer');
 
 const { Connection } = require('./connection'); // Olivia's module
 const cs304 = require('./cs304');
+const { slice } = require('lodash');
 
 // Create and configure the app
 
@@ -56,19 +57,17 @@ const DB = process.env.USER;
 const EMPOWER = 'empower';
 const USERS = 'users';
 const OPPS = 'opps';
-const WMDB = 'wmdb';
-const STAFF = 'staff';
+
 
 // main page. This shows the use of session cookies
 app.get('/', (req, res) => {
     /*
     let uid = req.session.uid || 'unknown';
+    console.log('uid', uid);
+    */
     let visits = req.session.visits || 0;
     visits++;
     req.session.visits = visits;
-    console.log('uid', uid);
-    return res.render('index.ejs', {uid, visits});
-    */
     return res.render('index.ejs');
 });
 
@@ -80,9 +79,11 @@ app.get('/signUp', (req, res) => {
     return res.render('signUp.ejs');
 })
 
+// delete once user sessions are figured out
 app.get('/userForm', (req, res) => {
     return res.render('userForm.ejs');
 })
+
 
 app.get('/postings', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
@@ -122,7 +123,7 @@ app.get('/do-postings', async (req, res) => {
 })
 
 app.get('/oppForm', (req, res) => {
-    let userUID = 1;
+    let userUID = "1";
     let userName = 'Alexa Halim';
     // need user name and uid for navbar
     return res.render('oppForm.ejs', {userUID: userUID, userName: userName});
@@ -135,7 +136,7 @@ app.get('/post/:oid', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
     let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
     console.log(opp);
-    let addedByUID = opp[0].addedBy;
+    let addedByUID = opp[0].addedBy.uid;
     console.log(addedByUID);
     let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
     console.log(addedBy);
@@ -152,7 +153,7 @@ app.get('/user/:uid', async (req, res) => {
     let user = await db.collection(USERS).find({uid: currUserUID}).toArray(); //not finding anybody, are we sure the user database has been created?
     console.log(user);
     // need user name and uid for navbar
-    let userUID = 1;
+    let userUID = "1";
     let userName = 'Alexa Halim';
     return res.render('userProfile.ejs', {user: user[0], userUID: userUID, userName: userName, statuses: ["Alumn", "Professor", "Staff", "Student", "Affiliate"]});
 })
@@ -162,7 +163,7 @@ app.get('/updatePost/:oid', async (req, res) => {
     let postOID = parseInt(req.params.oid);
     const db = await Connection.open(mongoUri, EMPOWER);
     let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
-    let addedByUID = opp[0].addedBy;
+    let addedByUID = opp[0].addedBy.uid;
     console.log(addedByUID);
     let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
     console.log(addedBy);
@@ -223,7 +224,7 @@ app.get('/updatePost/:oid', async (req, res) => {
         isCheckedOther = true;
     }
     // need user name and uid for navbar
-    let userUID = 1;
+    let userUID = "1";
     let userName = 'Alexa Halim';
     return res.render('updateOpp.ejs', {opp: opp[0], 
                                         addedBy: addedBy[0], 
@@ -246,13 +247,44 @@ app.get('/updatePost/:oid', async (req, res) => {
 
 // shows how logins might work by setting a value in the session
 // This is a conventional, non-Ajax, login, so it redirects to main page 
-app.post('/login', (req, res) => {
-    // adding confirmation of user
-    res.redirect('/postings');
-})
+app.post('/login', async (req, res) => {
+    const db = await Connection.open(mongoUri, DB);
+    try {
+        var username = req.body.uname;
+        var password = req.body.psw;
+        var existingUser = await db.collection(USERS).findOne({email: username});
+        if (!existingUser) {
+            req.flash('error', `User with email ${username} does not exist, please try again.`);
+            return res.redirect('/login');
+        }
+        const match = await bcrypt.compare(password, existingUser.hash);
+        if (!match) {
+            req.flash('error', `Incorrect username or password. Please try again.`);
+            return res.redirect('/login');
+        }
+        req.flash('info', `Logged in as ` + username);
+        req.session.username = username;
+        req.session.logged_in = true;
+        return res.redirect('/postings');
+    }   catch (error) {
+        req.flash('error', `Something went wrong: ${error}`);
+        return res.redirect('/login');
+    }
+});
 
-app.post('/signUp', (req, res) => {
-    res.redirect('/userForm/');
+app.post('/signUp', async (req, res) => {
+    let email = req.body.uname;
+    let users = await DB.collection(USERS).find({email: email}).toArray();
+    if (users.length != 0) {
+        req.flash('error', `User with email ${email} already in use! Please log in.`)
+    }
+    else if (email.slice(-14) != '@wellesley.edu') {
+        req.flash('error', `Error: Email must be a "@wellesley.edu" email!`)
+        return res.render('signUp.ejs');
+    }
+    else {
+        return res.render('userForm.ejs', {email: uname}); 
+    }
 })
 
 app.post('/userForm', async (req, res) => {
@@ -260,7 +292,7 @@ app.post('/userForm', async (req, res) => {
     console.log(req.body);
     let name = req.body.fullName;
     let uid = req.body.uid;
-    let email = req.body.email;
+    // let email = req.body.email;
     let status = req.body.userStatus;
     let industry = req.body.industry;
     let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
@@ -268,12 +300,12 @@ app.post('/userForm', async (req, res) => {
     let minors = req.body.minors;
     const db = await Connection.open(mongoUri, EMPOWER);
     const inserted = await db.collection(USERS).updateOne(
-        {uid: uid},
+        {uid: uid}, // changed to email. how do we do that?ß
         { $setOnInsert:
             {
                 uid: uid,
                 name: name,
-                email: email,
+                // email: email,
                 status: status,
                 classYear: year,
                 major: majors,
@@ -301,10 +333,11 @@ app.post('/oppForm', async (req, res) => {
     let expiration = req.body.due; //
     let refLink = req.body.referralLink; // is this the right name?
     let description = req.body.description; //
-    let addedBy = req.body.addedBy;
+    let addedByUID = req.body.addedBy;
 
     const db = await Connection.open(mongoUri, EMPOWER);
     const opps = await db.collection(OPPS);
+    let addedByName = await db.collection(USERS).find({uid: addedByUID}).toArray();
     let inserted = await opps.updateOne(
         { oid: oid },
         { $setOnInsert: 
@@ -320,7 +353,7 @@ app.post('/oppForm', async (req, res) => {
                 expiration: expiration,
                 referralLink: refLink,
                 description: description,
-                addedBy: addedBy,
+                addedBy: {uid: addedByUID, name: addedByName},
                 comments: null
             }
         },
@@ -452,12 +485,20 @@ app.post('/set-uid-ajax/', (req, res) => {
 });
 
 // conventional non-Ajax logout, so redirects
-app.post('/logout/', (req, res) => {
-    console.log('in logout');
-    req.session.uid = false;
-    req.session.logged_in = false;
-    res.redirect('/');
-});
+app.post('/logout', (req,res) => {
+    if (req.session.uid) {
+      req.session.email = null;
+      req.session.name = null;
+      req.session.logged_in = false;
+        // eventually, flash and redirect to /
+        req.flash('info', `<p>Logged out.`);
+        return res.redirect('/')
+    } else {
+        // eventually, flash and redirect to /
+        req.flash('error', `<p>You are not logged in; please login.`);
+        return res.redirect('/login');
+    }
+  });
 
 // two kinds of forms (GET and POST), both of which are pre-filled with data
 // from previous request, including a SELECT menu. Everything but radio buttons

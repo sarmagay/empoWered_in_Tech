@@ -1,0 +1,18 @@
+<!-- 'error' kind -->
+<% if (messages.error) { %> 
+    <div id="errors">
+      <% messages.error.forEach( msg => {%>
+      <p><%= msg %></p>
+      <% }) %>
+    </div>
+    <% } %>
+  
+<!-- 'info' kind -->
+    <% if (messages.info) { %>
+    <div id="info">
+      <% messages.info.forEach( msg => {%>
+      <p><%= msg %></p>
+      <% }) %>
+    </div>
+    <% } %>
+  </div>
