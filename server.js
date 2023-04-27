@@ -175,7 +175,7 @@ app.get('/updatePost/:oid', async (req, res) => {
 
 // shows how logins might work by setting a value in the session
 // This is a conventional, non-Ajax, login, so it redirects to main page 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     const db = await Connection.open(mongoUri, DB);
     try {
         var username = req.body.uname;
