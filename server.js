@@ -63,12 +63,11 @@ const OPPS = 'opps';
 app.get('/', (req, res) => {
     /*
     let uid = req.session.uid || 'unknown';
+    console.log('uid', uid);
+    */
     let visits = req.session.visits || 0;
     visits++;
     req.session.visits = visits;
-    console.log('uid', uid);
-    return res.render('index.ejs', {uid, visits});
-    */
     return res.render('index.ejs');
 });
 
@@ -176,7 +175,7 @@ app.get('/updatePost/:oid', async (req, res) => {
 
 // shows how logins might work by setting a value in the session
 // This is a conventional, non-Ajax, login, so it redirects to main page 
-app.post('/login', async (req, res) => {
+app.post('/login', (req, res) => {
     const db = await Connection.open(mongoUri, DB);
     try {
         var username = req.body.uname;
@@ -414,12 +413,20 @@ app.post('/set-uid-ajax/', (req, res) => {
 });
 
 // conventional non-Ajax logout, so redirects
-app.post('/logout/', (req, res) => {
-    console.log('in logout');
-    req.session.uid = false;
-    req.session.logged_in = false;
-    res.redirect('/');
-});
+app.post('/logout', (req,res) => {
+    if (req.session.uid) {
+      req.session.email = null;
+      req.session.name = null;
+      req.session.logged_in = false;
+        // eventually, flash and redirect to /
+        req.flash('info', `<p>Logged out.`);
+        return res.redirect('/')
+    } else {
+        // eventually, flash and redirect to /
+        req.flash('error', `<p>You are not logged in; please login.`);
+        return res.redirect('/login');
+    }
+  });
 
 // two kinds of forms (GET and POST), both of which are pre-filled with data
 // from previous request, including a SELECT menu. Everything but radio buttons
