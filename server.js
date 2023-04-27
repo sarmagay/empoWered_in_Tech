@@ -152,11 +152,57 @@ app.get('/user/:uid', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
     let user = await db.collection(USERS).find({uid: currUserUID}).toArray(); //not finding anybody, are we sure the user database has been created?
     console.log(user);
+
+    let isCheckedArr = user[0].industry;
+    let isCheckedBio = false;
+    let isCheckedCloud = false;
+    let isCheckedCompVision = false;
+    let isCheckedDataScience = false;
+    let isCheckedGraphics = false;
+    let isCheckedHci = false;
+    let isCheckedML = false;
+    let isCheckedProdDesign = false;
+    let isCheckedProdMgmt = false;
+    let isCheckedSWE = false;
+    let isCheckedSystems = false;
+    let isCheckedUiUx = false;
+    let isCheckedOther = false;
+
+    if (isCheckedArr.includes("bioinformatics")){isCheckedBio = true;};
+    if (isCheckedArr.includes("cloud")){isCheckedCloud = true;};
+    if (isCheckedArr.includes("compVision")){isCheckedCompVision = true;};
+    if (isCheckedArr.includes("dataScience")){isCheckedDataScience = true;};
+    if (isCheckedArr.includes("graphics")){isCheckedGraphics = true;};
+    if (isCheckedArr.includes("hci")){isCheckedHci = true;};
+    if (isCheckedArr.includes("ml")){isCheckedML = true;};
+    if (isCheckedArr.includes("prodDesign")){isCheckedProdDesign = true;};
+    if (isCheckedArr.includes("prodMgmt")){isCheckedProdMgmt = true;};
+    if (isCheckedArr.includes("software engineering")){isCheckedSWE = true;};
+    if (isCheckedArr.includes("systems")){isCheckedSystems = true;};
+    if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
+    if (isCheckedArr.includes("other")){isCheckedOther = true;};
+
     // need user name and uid for navbar
     let userUID = "1";
     let userName = 'Alexa Halim';
-    return res.render('userProfile.ejs', {user: user[0], userUID: userUID, userName: userName, statuses: ["Alumn", "Professor", "Staff", "Student", "Affiliate"]});
-})
+    return res.render('userProfile.ejs', {user: user[0], 
+                                          userUID: userUID, 
+                                          userName: userName, 
+                                          statuses: ["Alumn", "Professor", "Staff", "Student", "Affiliate"],
+                                          isCheckedBio: isCheckedBio,
+                                          isCheckedCloud: isCheckedCloud,
+                                          isCheckedCompVision: isCheckedCompVision,
+                                          isCheckedDataScience: isCheckedDataScience,
+                                          isCheckedGraphics: isCheckedGraphics,
+                                          isCheckedHci: isCheckedHci,
+                                          isCheckedML: isCheckedML,
+                                          isCheckedProdDesign: isCheckedProdDesign,
+                                          isCheckedProdMgmt: isCheckedProdMgmt,
+                                          isCheckedSWE: isCheckedSWE,
+                                          isCheckedSystems: isCheckedSystems,
+                                          isCheckedUiUx: isCheckedUiUx,
+                                          isCheckedOther: isCheckedOther});
+});
 
 app.get('/updatePost/:oid', async (req, res) => {
     // need data from corresponding opportunity doc
@@ -184,45 +230,19 @@ app.get('/updatePost/:oid', async (req, res) => {
     let isCheckedUiUx = false;
     let isCheckedOther = false;
 
-    if (isCheckedArr.includes("bioinformatics")){
-        isCheckedBio = true;
-    }
-    if (isCheckedArr.includes("cloud")){
-        isCheckedCloud = true;
-    }
-    if (isCheckedArr.includes("compVision")){
-        isCheckedCompVision = true;
-    }
-    if (isCheckedArr.includes("dataScience")){
-        isCheckedDataScience = true;
-    }
-    if (isCheckedArr.includes("graphics")){
-        isCheckedGraphics = true;
-    }
-    if (isCheckedArr.includes("hci")){
-        isCheckedHci = true;
-    }
-    if (isCheckedArr.includes("ml")){
-        isCheckedML = true;
-    }
-    if (isCheckedArr.includes("prodDesign")){
-        isCheckedProdDesign = true;
-    }
-    if (isCheckedArr.includes("prodMgmt")){
-        isCheckedProdMgmt = true;
-    }
-    if (isCheckedArr.includes("software engineering")){
-        isCheckedSWE = true;
-    }
-    if (isCheckedArr.includes("systems")){
-        isCheckedSystems = true;
-    }
-    if (isCheckedArr.includes("uiux")){
-        isCheckedUiUx = true;
-    }
-    if (isCheckedArr.includes("other")){
-        isCheckedOther = true;
-    }
+    if (isCheckedArr.includes("bioinformatics")){isCheckedBio = true;};
+    if (isCheckedArr.includes("cloud")){isCheckedCloud = true;};
+    if (isCheckedArr.includes("compVision")){isCheckedCompVision = true;};
+    if (isCheckedArr.includes("dataScience")){isCheckedDataScience = true;};
+    if (isCheckedArr.includes("graphics")){isCheckedGraphics = true;};
+    if (isCheckedArr.includes("hci")){isCheckedHci = true;};
+    if (isCheckedArr.includes("ml")){isCheckedML = true;};
+    if (isCheckedArr.includes("prodDesign")){isCheckedProdDesign = true;};
+    if (isCheckedArr.includes("prodMgmt")){isCheckedProdMgmt = true;};
+    if (isCheckedArr.includes("software engineering")){isCheckedSWE = true;};
+    if (isCheckedArr.includes("systems")){isCheckedSystems = true;};
+    if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
+    if (isCheckedArr.includes("other")){isCheckedOther = true;};
     //console.log(isCheckedSWE);
     // need user name and uid for navbar
     let userUID = "1";
@@ -244,7 +264,7 @@ app.get('/updatePost/:oid', async (req, res) => {
                                         isCheckedSystems: isCheckedSystems,
                                         isCheckedUiUx: isCheckedUiUx,
                                         isCheckedOther: isCheckedOther});
-                                    })
+});
 
 // shows how logins might work by setting a value in the session
 // This is a conventional, non-Ajax, login, so it redirects to main page 
@@ -461,7 +481,7 @@ app.post('/updatePost/:oid', async (req, res) => {
     let addedByUID = updatedOpp[0].addedBy.uid;
     let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
 
-    console.log(addedBy[0]);
+    //console.log(addedBy[0]);
 
     let isCheckedArr = updatedOpp[0].subfield;
     let isCheckedBio = false;
@@ -478,45 +498,20 @@ app.post('/updatePost/:oid', async (req, res) => {
     let isCheckedUiUx = false;
     let isCheckedOther = false;
 
-    if (isCheckedArr.includes("bioinformatics")){
-        isCheckedBio = true;
-    }
-    if (isCheckedArr.includes("cloud")){
-        isCheckedCloud = true;
-    }
-    if (isCheckedArr.includes("compVision")){
-        isCheckedCompVision = true;
-    }
-    if (isCheckedArr.includes("dataScience")){
-        isCheckedDataScience = true;
-    }
-    if (isCheckedArr.includes("graphics")){
-        isCheckedGraphics = true;
-    }
-    if (isCheckedArr.includes("hci")){
-        isCheckedHci = true;
-    }
-    if (isCheckedArr.includes("ml")){
-        isCheckedML = true;
-    }
-    if (isCheckedArr.includes("prodDesign")){
-        isCheckedProdDesign = true;
-    }
-    if (isCheckedArr.includes("prodMgmt")){
-        isCheckedProdMgmt = true;
-    }
-    if (isCheckedArr.includes("software engineering")){
-        isCheckedSWE = true;
-    }
-    if (isCheckedArr.includes("systems")){
-        isCheckedSystems = true;
-    }
-    if (isCheckedArr.includes("uiux")){
-        isCheckedUiUx = true;
-    }
-    if (isCheckedArr.includes("other")){
-        isCheckedOther = true;
-    }
+    if (isCheckedArr.includes("bioinformatics")){isCheckedBio = true;};
+    if (isCheckedArr.includes("cloud")){isCheckedCloud = true;};
+    if (isCheckedArr.includes("compVision")){isCheckedCompVision = true;};
+    if (isCheckedArr.includes("dataScience")){isCheckedDataScience = true;};
+    if (isCheckedArr.includes("graphics")){isCheckedGraphics = true;};
+    if (isCheckedArr.includes("hci")){isCheckedHci = true;};
+    if (isCheckedArr.includes("ml")){isCheckedML = true;};
+    if (isCheckedArr.includes("prodDesign")){isCheckedProdDesign = true;};
+    if (isCheckedArr.includes("prodMgmt")){isCheckedProdMgmt = true;};
+    if (isCheckedArr.includes("software engineering")){isCheckedSWE = true;};
+    if (isCheckedArr.includes("systems")){isCheckedSystems = true;};
+    if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
+    if (isCheckedArr.includes("other")){isCheckedOther = true;};
+
     res.render('updateOpp.ejs', {opp: updatedOpp[0], 
                                 addedBy: addedBy[0], 
                                 userUID: userUID, 
