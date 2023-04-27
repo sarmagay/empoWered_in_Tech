@@ -63,12 +63,11 @@ const STAFF = 'staff';
 app.get('/', (req, res) => {
     /*
     let uid = req.session.uid || 'unknown';
+    console.log('uid', uid);
+    */
     let visits = req.session.visits || 0;
     visits++;
     req.session.visits = visits;
-    console.log('uid', uid);
-    return res.render('index.ejs', {uid, visits});
-    */
     return res.render('index.ejs');
 });
 
@@ -174,9 +173,31 @@ app.get('/updatePost/:oid', async (req, res) => {
 
 // shows how logins might work by setting a value in the session
 // This is a conventional, non-Ajax, login, so it redirects to main page 
-app.post('/login', (req, res) => {
-    // adding confirmation of user
-    res.redirect('/postings');
+app.post('/login', async (req, res) => {
+    try {
+        let visits = req.session.visits || 0;
+        const email = req.body.uname;
+        const db = await Connection.open(mongoUri, EMPOWER);
+        var existingUID = await db.collection(USERS).findOne({email: email});
+        // check if password is correct
+        if (!existingUID) {
+            // eventually, flash an error message and re-render
+            return res.send(`No such user ${email} &mdash; please try a different UID`);
+        } else {
+            let name = existingUID.name;
+            req.flash('info', 'successfully logged in as user ' + email);
+            console.log(existingUID, email, name);
+            req.session.email = email;
+            req.session.name = name;
+            req.session.visits = 1;
+            req.session.logged_in = true;
+            // eventually, flash and redirect to /visit
+            return res.send(`<p>Logged in as ${name} (${email}). <a href="/visit">visit</a>`);
+        }
+      } catch (error) {
+          return res.send(`Form submission error: ${error}`)
+      }
+    res.redirect('/postings'); // where does this go?
 })
 
 app.post('/signUp', (req, res) => {
@@ -381,12 +402,18 @@ app.post('/set-uid-ajax/', (req, res) => {
 });
 
 // conventional non-Ajax logout, so redirects
-app.post('/logout/', (req, res) => {
-    console.log('in logout');
-    req.session.uid = false;
-    req.session.logged_in = false;
-    res.redirect('/');
-});
+app.post('/logout', (req,res) => {
+    if (req.session.uid) {
+      req.session.email = null;
+      req.session.name = null;
+      req.session.logged_in = false;
+        // eventually, flash and redirect to /
+        return res.send(`<p>Logged out. <a href="/">home</a></p>`);
+    } else {
+        // eventually, flash and redirect to /
+        return res.send(`<p>You are not logged in; please login: <a href="/">home</a></p>`);
+    }
+  });
 
 // two kinds of forms (GET and POST), both of which are pre-filled with data
 // from previous request, including a SELECT menu. Everything but radio buttons
