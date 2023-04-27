@@ -192,7 +192,7 @@ app.post('/login', async (req, res) => {
         }
         req.flash('info', `Logged in as ` + username);
         req.session.username = username;
-        // req.session.logged_in = true;
+        req.session.logged_in = true;
         return res.redirect('/postings');
     }   catch (error) {
         req.flash('error', `Something went wrong: ${error}`);
