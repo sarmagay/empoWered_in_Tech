@@ -166,11 +166,83 @@ app.get('/updatePost/:oid', async (req, res) => {
     console.log(addedByUID);
     let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
     console.log(addedBy);
+    //testing for pre-select checkbox
+    console.log(opp[0].subfield);
+    let isCheckedArr = opp[0].subfield;
+    let isCheckedBio = false;
+    let isCheckedCloud = false;
+    let isCheckedCompVision = false;
+    let isCheckedDataScience = false;
+    let isCheckedGraphics = false;
+    let isCheckedHci = false;
+    let isCheckedML = false;
+    let isCheckedProdDesign = false;
+    let isCheckedProdMgmt = false;
+    let isCheckedSWE = false;
+    let isCheckedSystems = false;
+    let isCheckedUiUx = false;
+    let isCheckedOther = false;
+
+    if (isCheckedArr.includes("bioinformatics")){
+        isCheckedBio = true;
+    }
+    if (isCheckedArr.includes("cloud")){
+        isCheckedCloud = true;
+    }
+    if (isCheckedArr.includes("compVision")){
+        isCheckedCompVision = true;
+    }
+    if (isCheckedArr.includes("dataScience")){
+        isCheckedDataScience = true;
+    }
+    if (isCheckedArr.includes("graphics")){
+        isCheckedGraphics = true;
+    }
+    if (isCheckedArr.includes("hci")){
+        isCheckedHci = true;
+    }
+    if (isCheckedArr.includes("ml")){
+        isCheckedML = true;
+    }
+    if (isCheckedArr.includes("prodDesign")){
+        isCheckedProdDesign = true;
+    }
+    if (isCheckedArr.includes("prodMgmt")){
+        isCheckedProdMgmt = true;
+    }
+    if (isCheckedArr.includes("swe")){
+        isCheckedSWE = true;
+    }
+    if (isCheckedArr.includes("systems")){
+        isCheckedSystems = true;
+    }
+    if (isCheckedArr.includes("uiux")){
+        isCheckedUiUx = true;
+    }
+    if (isCheckedArr.includes("other")){
+        isCheckedOther = true;
+    }
     // need user name and uid for navbar
     let userUID = 1;
     let userName = 'Alexa Halim';
-    return res.render('updateOpp.ejs', {opp: opp[0], addedBy: addedBy[0], userUID: userUID, userName: userName});
-})
+    return res.render('updateOpp.ejs', {opp: opp[0], 
+                                        addedBy: addedBy[0], 
+                                        userUID: userUID, 
+                                        userName: userName,
+                                        isCheckedBio: isCheckedBio,
+                                        isCheckedCloud: isCheckedCloud,
+                                        isCheckedCompVision: isCheckedCompVision,
+                                        isCheckedDataScience: isCheckedDataScience,
+                                        isCheckedGraphics: isCheckedGraphics,
+                                        isCheckedHci: isCheckedHci,
+                                        isCheckedML: isCheckedML,
+                                        isCheckedProdDesign: isCheckedProdDesign,
+                                        isCheckedProdMgmt: isCheckedProdMgmt,
+                                        isCheckedSWE: isCheckedSWE,
+                                        isCheckedSystems: isCheckedSystems,
+                                        isCheckedUiUx: isCheckedUiUx,
+                                        isCheckedOther: isCheckedOther});
+                                    })
 
 // shows how logins might work by setting a value in the session
 // This is a conventional, non-Ajax, login, so it redirects to main page 

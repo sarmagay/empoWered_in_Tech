@@ -45,21 +45,21 @@
        <span class="oppSubfield">Choose Opportunity Subfield(s):</span>
        <ul class="items"> <%# opp.subfield which is an array, want to loop through it %>
         <%# for el in opp.subfield:  %>
-         <li><input type="checkbox" name ="subfield" value="bioinformatics"/>Bioinformatics </li>
+         <li><input type="checkbox" name ="subfield" value="bioinformatics" <% isCheckedBio ? "checked" : "" %>/>Bioinformatics </li>
          <%# checked versioon %>
          <%# <li><input type="checkbox" name ="subfield" value="bioinformatics" checked/>Bioinformatics </li> %>
-         <li><input type="checkbox" name ="subfield" value="cloud"/>Cloud Computing/Development</li>
-         <li><input type="checkbox" name ="subfield" value="compVision"/>Computer Vision</option> </li>
-         <li><input type="checkbox" name ="subfield" value="dataScience"/>Data Science </li>
-         <li><input type="checkbox" name ="subfield" value="graphics"/>Graphics </li>
-         <li><input type="checkbox" name ="subfield" value="hci"/>Human-Computer Interaction </li>
-         <li><input type="checkbox" name ="subfield" value="ml"/>Machine Learning</li>
-         <li><input type="checkbox" name ="subfield" value="prodDesign"/>Product Design</li>
-         <li><input type="checkbox" name ="subfield" value="prodMgmt"/>Product Management</li>
-         <li><input type="checkbox" name ="subfield" value="swe"/>Software Engineering</li>
-         <li><input type="checkbox" name ="subfield" value="systems"/>Systems</li>
-         <li><input type="checkbox" name ="subfield" value="uiux"/>UI/UX</li>
-         <li><input type="checkbox" name ="subfield" value="other"/>Other</li>
+         <li><input type="checkbox" name ="subfield" value="cloud" <% isCheckedCloud ? "checked" : "" %>/>Cloud Computing/Development</li>
+         <li><input type="checkbox" name ="subfield" value="compVision" <% isCheckedCompVision ? "checked" : "" %>/>Computer Vision</option> </li>
+         <li><input type="checkbox" name ="subfield" value="dataScience" <% isCheckedDataScience ? "checked" : "" %>/>Data Science </li>
+         <li><input type="checkbox" name ="subfield" value="graphics" <% isCheckedGraphics ? "checked" : "" %>/>Graphics </li>
+         <li><input type="checkbox" name ="subfield" value="hci" <% isCheckedHci ? "checked" : "" %>/>Human-Computer Interaction </li>
+         <li><input type="checkbox" name ="subfield" value="ml" <% isCheckedML ? "checked" : "" %>/>Machine Learning</li>
+         <li><input type="checkbox" name ="subfield" value="prodDesign" <% isCheckedprodDesign ? "checked" : "" %>/>Product Design</li>
+         <li><input type="checkbox" name ="subfield" value="prodMgmt" <% isCheckedProdMgmt ? "checked" : "" %>/>Product Management</li>
+         <li><input type="checkbox" name ="subfield" value="swe"/ <% isCheckedSWE ? "checked" : "" %>>Software Engineering</li>
+         <li><input type="checkbox" name ="subfield" value="systems" <% isCheckedSystems ? "checked" : "" %>/>Systems</li>
+         <li><input type="checkbox" name ="subfield" value="uiux" <% isCheckedUiUx ? "checked" : "" %>>UI/UX</li>
+         <li><input type="checkbox" name ="subfield" value="other" <% isCheckedOther ? "checked" : "" %>>Other</li>
        </ul>
      </div>
 
