@@ -43,24 +43,73 @@
 
    <div id="oppSubfieldDropdown" class="dropdown-check-list" tabindex="100">
        <span class="oppSubfield">Choose Opportunity Subfield(s):</span>
-       <ul class="items"> <%# opp.subfield which is an array, want to loop through it %>
-        <%# for el in opp.subfield:  %>
-         <li><input type="checkbox" name ="subfield" value="bioinformatics" <% isCheckedBio ? "checked" : "" %>/>Bioinformatics </li>
-         <%# checked versioon %>
-         <%# <li><input type="checkbox" name ="subfield" value="bioinformatics" checked/>Bioinformatics </li> %>
-         <li><input type="checkbox" name ="subfield" value="cloud" <% isCheckedCloud ? "checked" : "" %>/>Cloud Computing/Development</li>
-         <li><input type="checkbox" name ="subfield" value="compVision" <% isCheckedCompVision ? "checked" : "" %>/>Computer Vision</option> </li>
-         <li><input type="checkbox" name ="subfield" value="dataScience" <% isCheckedDataScience ? "checked" : "" %>/>Data Science </li>
-         <li><input type="checkbox" name ="subfield" value="graphics" <% isCheckedGraphics ? "checked" : "" %>/>Graphics </li>
-         <li><input type="checkbox" name ="subfield" value="hci" <% isCheckedHci ? "checked" : "" %>/>Human-Computer Interaction </li>
-         <li><input type="checkbox" name ="subfield" value="ml" <% isCheckedML ? "checked" : "" %>/>Machine Learning</li>
-         <li><input type="checkbox" name ="subfield" value="prodDesign" <% isCheckedprodDesign ? "checked" : "" %>/>Product Design</li>
-         <li><input type="checkbox" name ="subfield" value="prodMgmt" <% isCheckedProdMgmt ? "checked" : "" %>/>Product Management</li>
-         <li><input type="checkbox" name ="subfield" value="swe"/ <% isCheckedSWE ? "checked" : "" %>>Software Engineering</li>
-         <li><input type="checkbox" name ="subfield" value="systems" <% isCheckedSystems ? "checked" : "" %>/>Systems</li>
-         <li><input type="checkbox" name ="subfield" value="uiux" <% isCheckedUiUx ? "checked" : "" %>>UI/UX</li>
-         <li><input type="checkbox" name ="subfield" value="other" <% isCheckedOther ? "checked" : "" %>>Other</li>
-       </ul>
+       <ul class="items">
+        <% if (isCheckedBio){ %>
+         <li><input type="checkbox" name ="subfield" value="bioinformatics" checked/>Bioinformatics </li>
+         <% } else { %>
+         <%# <li><input type="checkbox" name ="subfield" value="bioinformatics"/>Bioinformatics </li> %>
+         <% } %>
+         <% if (isCheckedCloud){ %>
+         <li><input type="checkbox" name ="subfield" value="cloud" checked/>Cloud Computing/Development</li>
+         <% } else {%>
+         <li><input type="checkbox" name ="subfield" value="cloud"/>Cloud Computing/Development</li>
+         <% } %>
+         <% if (isCheckedCompVision){ %>
+         <li><input type="checkbox" name ="subfield" value="compVision" checked/>Computer Vision</option> </li>
+         <% } else {%>
+         <li><input type="checkbox" name ="subfield" value="compVision"/>Computer Vision</option> </li>
+         <% } %>
+         <% if (isCheckedDataScience){ %>
+         <li><input type="checkbox" name ="subfield" value="dataScience" checked/>Data Science </li>
+         <% } else {%>
+         <li><input type="checkbox" name ="subfield" value="dataScience"/>Data Science </li>
+         <% } %>
+         <% if (isCheckedGraphics){ %>
+         <li><input type="checkbox" name ="subfield" value="graphics" checked/>Graphics </li>
+         <%} else {%>
+         <li><input type="checkbox" name ="subfield" value="graphics"/>Graphics </li>
+         <% } %>
+         <% if (isCheckedHci){ %>
+         <li><input type="checkbox" name ="subfield" value="hci" checked/>Human-Computer Interaction </li>
+         <% } else {%>
+         <li><input type="checkbox" name ="subfield" value="hci"/>Human-Computer Interaction </li>
+         <% } %>
+         <% if (isCheckedML){ %>
+         <li><input type="checkbox" name ="subfield" value="ml" checked/>Machine Learning</li>
+         <%} else {%>
+         <li><input type="checkbox" name ="subfield" value="ml"/>Machine Learning</li>
+         <% } %>
+         <% if (isCheckedProdDesign){ %>
+         <li><input type="checkbox" name ="subfield" value="prodDesign" checked/>Product Design</li>
+         <%} else {%>
+         <li><input type="checkbox" name ="subfield" value="prodDesign"/>Product Design</li>
+         <% } %>
+         <% if (isCheckedProdMgmt){ %>
+         <li><input type="checkbox" name ="subfield" value="prodMgmt" checked/>Product Management</li>
+         <%} else {%>
+         <li><input type="checkbox" name ="subfield" value="prodMgmt"/>Product Management</li>
+         <% } %>
+         <% if (isCheckedSWE){ %>
+         <li><input type="checkbox" name ="subfield" value="software engineering" checked/>Software Engineering</li>
+         <% } else { %>
+            <li><input type="checkbox" name ="subfield" value="software engineering"/>Software Engineering</li>
+         <% } %>
+         <% if (isCheckedSystems){ %>
+         <li><input type="checkbox" name ="subfield" value="systems" checked/>Systems</li>
+         <%} else {%>
+         <li><input type="checkbox" name ="subfield" value="systems"/>Systems</li>
+         <% } %>
+         <% if (isCheckedUiUx){ %>
+         <li><input type="checkbox" name ="subfield" value="uiux" checked/>UI/UX</li>
+         <%} else {%>
+         <li><input type="checkbox" name ="subfield" value="uiux"/>UI/UX</li>
+         <% } %>
+         <% if (isCheckedOther){ %>
+         <li><input type="checkbox" name ="subfield" value="other" checked/>Other</li>
+         <%} else {%>
+         <li><input type="checkbox" name ="subfield" value="other"/>Other</li>
+         <% } %>
+        </ul>
      </div>
 
 

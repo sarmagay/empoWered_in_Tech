@@ -211,7 +211,7 @@ app.get('/updatePost/:oid', async (req, res) => {
     if (isCheckedArr.includes("prodMgmt")){
         isCheckedProdMgmt = true;
     }
-    if (isCheckedArr.includes("swe")){
+    if (isCheckedArr.includes("software engineering")){
         isCheckedSWE = true;
     }
     if (isCheckedArr.includes("systems")){
@@ -223,6 +223,7 @@ app.get('/updatePost/:oid', async (req, res) => {
     if (isCheckedArr.includes("other")){
         isCheckedOther = true;
     }
+    //console.log(isCheckedSWE);
     // need user name and uid for navbar
     let userUID = "1";
     let userName = 'Alexa Halim';
@@ -457,9 +458,82 @@ app.post('/updatePost/:oid', async (req, res) => {
     console.log(edited);
     let updatedOpp = await db.collection(OPPS).find({oid: oid}).toArray();
     console.log(updatedOpp[0]); // shows up as undefined
-    let addedByUID = updatedOpp[0].addedBy;
+    let addedByUID = updatedOpp[0].addedBy.uid;
     let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
-    res.render('updateOpp.ejs', {opp: updatedOpp[0], addedBy: addedBy[0], userUID: userUID, userName: userName})
+
+    console.log(addedBy[0]);
+
+    let isCheckedArr = updatedOpp[0].subfield;
+    let isCheckedBio = false;
+    let isCheckedCloud = false;
+    let isCheckedCompVision = false;
+    let isCheckedDataScience = false;
+    let isCheckedGraphics = false;
+    let isCheckedHci = false;
+    let isCheckedML = false;
+    let isCheckedProdDesign = false;
+    let isCheckedProdMgmt = false;
+    let isCheckedSWE = false;
+    let isCheckedSystems = false;
+    let isCheckedUiUx = false;
+    let isCheckedOther = false;
+
+    if (isCheckedArr.includes("bioinformatics")){
+        isCheckedBio = true;
+    }
+    if (isCheckedArr.includes("cloud")){
+        isCheckedCloud = true;
+    }
+    if (isCheckedArr.includes("compVision")){
+        isCheckedCompVision = true;
+    }
+    if (isCheckedArr.includes("dataScience")){
+        isCheckedDataScience = true;
+    }
+    if (isCheckedArr.includes("graphics")){
+        isCheckedGraphics = true;
+    }
+    if (isCheckedArr.includes("hci")){
+        isCheckedHci = true;
+    }
+    if (isCheckedArr.includes("ml")){
+        isCheckedML = true;
+    }
+    if (isCheckedArr.includes("prodDesign")){
+        isCheckedProdDesign = true;
+    }
+    if (isCheckedArr.includes("prodMgmt")){
+        isCheckedProdMgmt = true;
+    }
+    if (isCheckedArr.includes("software engineering")){
+        isCheckedSWE = true;
+    }
+    if (isCheckedArr.includes("systems")){
+        isCheckedSystems = true;
+    }
+    if (isCheckedArr.includes("uiux")){
+        isCheckedUiUx = true;
+    }
+    if (isCheckedArr.includes("other")){
+        isCheckedOther = true;
+    }
+    res.render('updateOpp.ejs', {opp: updatedOpp[0], 
+                                addedBy: addedBy[0], 
+                                userUID: userUID, 
+                                userName: userName,
+                                isCheckedBio: isCheckedBio,
+                                isCheckedCloud: isCheckedCloud,
+                                isCheckedCompVision: isCheckedCompVision,
+                                isCheckedDataScience: isCheckedDataScience,
+                                isCheckedGraphics: isCheckedGraphics,
+                                isCheckedHci: isCheckedHci,
+                                isCheckedML: isCheckedML,
+                                isCheckedProdDesign: isCheckedProdDesign,
+                                isCheckedProdMgmt: isCheckedProdMgmt,
+                                isCheckedSWE: isCheckedSWE,
+                                isCheckedSystems: isCheckedSystems,
+                                isCheckedUiUx: isCheckedUiUx,
+                                isCheckedOther: isCheckedOther})
 })
 
 app.post('/set-uid/', (req, res) => {
