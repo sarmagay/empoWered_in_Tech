@@ -23,14 +23,42 @@
 
    <p><label>Opportunity Type:
    <select name="oppType" value="<%= opp.type %>"" required>
-       <option value=""><%= opp.type %></option>
-       <option value="Conference">Conference</option>
-       <option value="Fellowship">Fellowship</option>
-       <option value="Full-time Job">Full-time Job</option>
-       <option value="Industry">Industry</option>
-       <option value="Research">Research</option>
-       <option value="Workshop">Workshop</option>
-       <option value="Other">Other</option>
+       <option name="type" value="">Choose type</option>
+       <% if (isSelectedConf){ %>
+       <option name="type" value="Conference" selected>Conference</option>
+       <% } else { %>
+       <option name="type" value="Conference">Conference</option>
+       <% } %>
+       <% if (isSelectedFel){ %>
+       <option name="type" value="Fellowship" selected>Fellowship</option>
+       <% } else { %>
+       <option name="type" value="Fellowship">Fellowship</option>
+       <% } %>
+       <% if (isSelectedJob){ %>
+       <option name="type" value="Full-time Job" selected>Full-time Job</option>
+       <% } else { %>
+       <option name="type" value="Full-time Job">Full-time Job</option>
+       <% } %>
+       <% if (isSelectedInt){ %>
+       <option name="type" value="Internship" selected>Internship</option>
+       <% } else { %>
+       <option name="type" value="Internship">Internship</option>
+       <% } %>
+       <% if (isSelectedRes){ %>
+       <option name="type" value="Research" selected>Research</option>
+       <% } else { %>
+       <option name="type" value="Research">Research</option>
+       <% } %>
+       <% if (isSelectedWork){ %>
+       <option name="type" value="Workshop" selected>Workshop</option>
+       <% } else { %>
+       <option name="type" value="Workshop">Workshop</option>
+       <% } %>
+       <% if (isSelectedOther){ %>
+       <option name="type" value="Other" selected>Other</option>
+       <% } else { %>
+       <option name="type" value="Other">Other</option>
+       <% } %>
    </select>
    </label></p>
 

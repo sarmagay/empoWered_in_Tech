@@ -153,6 +153,7 @@ app.get('/user/:uid', async (req, res) => {
     let user = await db.collection(USERS).find({uid: currUserUID}).toArray(); //not finding anybody, are we sure the user database has been created?
     console.log(user);
 
+    //setting up the checkbox pre-select values to render in the userProfile.ejs
     let isCheckedArr = user[0].industry;
     let isCheckedBio = false;
     let isCheckedCloud = false;
@@ -213,7 +214,26 @@ app.get('/updatePost/:oid', async (req, res) => {
     console.log(addedByUID);
     let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
     console.log(addedBy);
-    //testing for pre-select checkbox
+
+    //setting up the drop-down pre-select values to render in the updateOpp.ejs
+    let isSelectedStr = opp[0].type;
+    let isSelectedConf = false;
+    let isSelectedFel = false;
+    let isSelectedJob = false;
+    let isSelectedInt = false;
+    let isSelectedRes = false;
+    let isSelectedWork = false;
+    let isSelectedOther = false;
+
+    if (isSelectedStr == "Conference" ){isSelectedConf = true;};
+    if (isSelectedStr == "Fellowship" ){isSelectedFel = true;};
+    if (isSelectedStr == "Full-time Job" ){isSelectedJob = true;};
+    if (isSelectedStr == "Internship" ){isSelectedInt = true;};
+    if (isSelectedStr == "Research" ){isSelectedRes = true;};
+    if (isSelectedStr == "Workshop" ){isSelectedWork = true;};
+    if (isSelectedStr == "Other" ){isSelectedOther = true;};
+
+    //setting up the checkbox pre-select values to render in the updateOpp.ejs
     console.log(opp[0].subfield);
     let isCheckedArr = opp[0].subfield;
     let isCheckedBio = false;
@@ -263,7 +283,14 @@ app.get('/updatePost/:oid', async (req, res) => {
                                         isCheckedSWE: isCheckedSWE,
                                         isCheckedSystems: isCheckedSystems,
                                         isCheckedUiUx: isCheckedUiUx,
-                                        isCheckedOther: isCheckedOther});
+                                        isCheckedOther: isCheckedOther,
+                                        isSelectedConf: isSelectedConf,
+                                        isSelectedFel: isSelectedFel,
+                                        isSelectedJob: isSelectedJob,
+                                        isSelectedInt: isSelectedInt,
+                                        isSelectedRes: isSelectedRes,
+                                        isSelectedWork: isSelectedWork,
+                                        isSelectedOther: isSelectedOther});
 });
 
 // shows how logins might work by setting a value in the session
@@ -483,6 +510,25 @@ app.post('/updatePost/:oid', async (req, res) => {
 
     //console.log(addedBy[0]);
 
+    //setting up the drop-down pre-select values to render in the updateOpp.ejs
+    let isSelectedStr = updatedOpp[0].type;
+    let isSelectedConf = false;
+    let isSelectedFel = false;
+    let isSelectedJob = false;
+    let isSelectedInt = false;
+    let isSelectedRes = false;
+    let isSelectedWork = false;
+    let isSelectedOther = false;
+
+    if (isSelectedStr == "Conference" ){isSelectedConf = true;};
+    if (isSelectedStr == "Fellowship" ){isSelectedFel = true;};
+    if (isSelectedStr == "Full-time Job" ){isSelectedJob = true;};
+    if (isSelectedStr == "Internship" ){isSelectedInt = true;};
+    if (isSelectedStr == "Research" ){isSelectedRes = true;};
+    if (isSelectedStr == "Workshop" ){isSelectedWork = true;};
+    if (isSelectedStr == "Other" ){isSelectedOther = true;};
+
+    //setting up the checkbox pre-select values to render in the updateOpp.ejs
     let isCheckedArr = updatedOpp[0].subfield;
     let isCheckedBio = false;
     let isCheckedCloud = false;
@@ -528,7 +574,14 @@ app.post('/updatePost/:oid', async (req, res) => {
                                 isCheckedSWE: isCheckedSWE,
                                 isCheckedSystems: isCheckedSystems,
                                 isCheckedUiUx: isCheckedUiUx,
-                                isCheckedOther: isCheckedOther})
+                                isCheckedOther: isCheckedOther,
+                                isSelectedConf: isSelectedConf,
+                                isSelectedFel: isSelectedFel,
+                                isSelectedJob: isSelectedJob,
+                                isSelectedInt: isSelectedInt,
+                                isSelectedRes: isSelectedRes,
+                                isSelectedWork: isSelectedWork,
+                                isSelectedOther: isSelectedOther})
 })
 
 app.post('/set-uid/', (req, res) => {
