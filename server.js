@@ -15,6 +15,7 @@ const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const flash = require('express-flash');
 const multer = require('multer');
+const bcrypt = require('bcrypt');
 
 // our modules loaded from cwd
 
@@ -61,15 +62,15 @@ const STAFF = 'staff';
 
 // main page. This shows the use of session cookies
 app.get('/', (req, res) => {
-    /*
+    // comment out?
     let uid = req.session.uid || 'unknown';
     let visits = req.session.visits || 0;
     visits++;
     req.session.visits = visits;
     console.log('uid', uid);
     return res.render('index.ejs', {uid, visits});
-    */
-    return res.render('index.ejs');
+    // comment out?
+    //return res.render('index.ejs');
 });
 
 app.get('/login', (req, res) => {
@@ -77,7 +78,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/signUp', (req, res) => {
-    return res.render('signUp.ejs');
+    return res.render('signUp.ejs', {action: '/userForm/', data: req.query});
 })
 
 app.get('/userForm', (req, res) => {
@@ -144,8 +145,35 @@ app.post('/login', (req, res) => {
     res.redirect('/postings');
 })
 
-app.post('/signUp', (req, res) => {
+app.post('/signUp', async (req, res) => {
+    //res.redirect('/userForm/');
+    // ADDING PASSWORD FUNCTIONALITY
+    let email = req.body.uname;
+    let password = req.body.psw;
+    let salt = bcrypt.genSaltSync();
+    //console.log("new salt ", "\t", salt);
+    let hash = bcrypt.hashSync(password, salt);
+    //console.log("signup/stored", "\t", salt);
+    //res.redirect('/userForm/');
+    //return res.render('form.ejs', {action: '/form/', data: {email, hash} });
+    const db = await Connection.open(mongoUri, EMPOWER);
+    let inserted = await db.collection(USERS).updateOne(
+        {email: email},
+        { 
+            $setOnInsert:
+            {
+                
+                email: email,
+                password: hash
+            }
+        },
+            { upsert: true }
+    )
+    console.log(inserted);   
     res.redirect('/userForm/');
+    //return res.render('userForm.ejs', {action: '/userForm/', data: {email, hash} });
+
+  
 })
 
 app.post('/userForm', async (req, res) => {
@@ -160,7 +188,7 @@ app.post('/userForm', async (req, res) => {
     let majors = req.body.majors.split(", ")
     let minors = req.body.minors;
     const db = await Connection.open(mongoUri, EMPOWER);
-    const inserted = await db.collection(USERS).updateOne(
+    const inserted = await db.collection(USERS).find({email: email}).updateOne(
         {uid: uid},
         { $setOnInsert:
             {
@@ -335,6 +363,8 @@ app.get('/staffList/', async (req, res) => {
     console.log('len', all.length, 'first', all[0]);
     return res.render('list.ejs', {listDescription: 'all staff', list: all});
 });
+
+
 
 // ================================================================
 // postlude
