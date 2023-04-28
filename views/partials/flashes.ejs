@@ -1,18 +1,20 @@
-<!-- 'error' kind -->
-<% if (messages.error) { %> 
-    <div id="errors">
-      <% messages.error.forEach( msg => {%>
+<div id="flashes">
+  <!-- 'error' kind -->
+  <% if (messages && messages.error) { %> 
+    <div class="errors">
+      <% for (msg of messages.error) {%>
       <p><%= msg %></p>
-      <% }) %>
+      <% } %>
     </div>
-    <% } %>
-  
+  <% } %>
+
 <!-- 'info' kind -->
-    <% if (messages.info) { %>
-    <div id="info">
-      <% messages.info.forEach( msg => {%>
+  <% if (messages && messages.info) { %>
+    <div class="info">
+      <% for (msg of messages.info) {%>
       <p><%= msg %></p>
-      <% }) %>
+      <% } %>
     </div>
     <% } %>
-  </div>
+    </div>
+</div>

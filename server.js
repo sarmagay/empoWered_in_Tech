@@ -49,6 +49,7 @@ app.use(cookieSession({
     // Cookie Options
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
+app.use(flash());
 
 // ================================================================
 // custom routes here
@@ -336,6 +337,8 @@ app.post('/signUp', async (req, res) => {
 })
 
 app.post('/userForm', async (req, res) => {
+    // let user = req.session.username;
+    // if req.session.logged_in and flash redirect back to log in
     // make sure necessary fields are filled
     console.log(req.body);
     let name = req.body.fullName;
