@@ -96,6 +96,7 @@ app.get('/postings', async (req, res) => {
     return res.render('postings.ejs', {list: allOpps, userUID: userUID, userName: userName});
 })
 
+
 app.get('/do-postings', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
     let showOpps = await db.collection(OPPS).find({}).toArray();
@@ -322,15 +323,22 @@ app.post('/login', async (req, res) => {
 });
 
 app.post('/signUp', async (req, res) => {
-    let email = req.body.uname;
+    const { email, password, confirmedPassword } = req.body;
     let users = await DB.collection(USERS).find({email: email}).toArray();
+    // if pws do not match
+    if (password != confirmedPassword) {
+        req.flash('error', `Passwords do not match`)
+    }
+    // if email is already in db
     if (users.length != 0) {
         req.flash('error', `User with email ${email} already in use! Please log in.`)
     }
+    // if email not @wellesley.edu domain
     else if (email.slice(-14) != '@wellesley.edu') {
         req.flash('error', `Error: Email must be a "@wellesley.edu" email!`)
         return res.render('signUp.ejs');
     }
+    // success
     else {
         return res.render('userForm.ejs', {email: uname}); 
     }
