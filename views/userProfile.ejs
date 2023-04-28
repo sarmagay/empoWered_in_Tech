@@ -11,6 +11,10 @@
 <body>
     <%- include("partials/navbar.ejs") %>
 
+    <form method="POST" action="/logout">
+        <input type="submit" value="logout>">
+    </form>  
+
     <form class="form"
      id="userForm"
      method="POST"
@@ -42,21 +46,73 @@
 
         <div id="interestTypeDropdown" class="dropdown-check-list" tabindex="100">
             <span class="interestType">Choose Interest(s)</span>
-                <ul class="items">
-                <li><input name="industry" type="checkbox" value="bioinformatics"/>Bioinformatics </li>
-                <li><input name="industry" type="checkbox" value="cloud"/>Cloud Computing/Development</li>
-                <li><input name="industry" type="checkbox" value="compVision"/>Computer Vision</option </li>
-                <li><input name="industry" type="checkbox" value="dataScience"/>Data Science </li>
-                <li><input name="industry" type="checkbox" value="graphics"/>Graphics </li>
-                <li><input name="industry" type="checkbox" value="hci"/>Human-Computer Interaction </li>
-                <li><input name="industry" type="checkbox" value="ml"/>Machine Learning</li>
-                <li><input name="industry" type="checkbox" value="prodDesign"/>Product Design</li>
-                <li><input name="industry" type="checkbox" value="prodMgmt"/>Product Management</li>
-                <li><input name="industry" type="checkbox" value="swe"/>Software Engineering</li>
-                <li><input name="industry" type="checkbox" value="systems"/>Systems</li>
-                <li><input name="industry" type="checkbox" value="uiux"/>UI/UX</li>
-                <li><input name="industry" type="checkbox" value="other"/>Other</li>
-            </ul>
+            <ul class="items">
+                <% if (isCheckedBio){ %>
+                 <li><input type="checkbox" name ="industry" value="bioinformatics" checked/>Bioinformatics </li>
+                 <% } else { %>
+                 <%# <li><input type="checkbox" name ="industry" value="bioinformatics"/>Bioinformatics </li> %>
+                 <% } %>
+                 <% if (isCheckedCloud){ %>
+                 <li><input type="checkbox" name ="industry" value="cloud" checked/>Cloud Computing/Development</li>
+                 <% } else {%>
+                 <li><input type="checkbox" name ="industry" value="cloud"/>Cloud Computing/Development</li>
+                 <% } %>
+                 <% if (isCheckedCompVision){ %>
+                 <li><input type="checkbox" name ="industry" value="compVision" checked/>Computer Vision</option> </li>
+                 <% } else {%>
+                 <li><input type="checkbox" name ="industry" value="compVision"/>Computer Vision</option> </li>
+                 <% } %>
+                 <% if (isCheckedDataScience){ %>
+                 <li><input type="checkbox" name ="industry" value="dataScience" checked/>Data Science </li>
+                 <% } else {%>
+                 <li><input type="checkbox" name ="industry" value="dataScience"/>Data Science </li>
+                 <% } %>
+                 <% if (isCheckedGraphics){ %>
+                 <li><input type="checkbox" name ="industry" value="graphics" checked/>Graphics </li>
+                 <%} else {%>
+                 <li><input type="checkbox" name ="industry" value="graphics"/>Graphics </li>
+                 <% } %>
+                 <% if (isCheckedHci){ %>
+                 <li><input type="checkbox" name ="industry" value="hci" checked/>Human-Computer Interaction </li>
+                 <% } else {%>
+                 <li><input type="checkbox" name ="industry" value="hci"/>Human-Computer Interaction </li>
+                 <% } %>
+                 <% if (isCheckedML){ %>
+                 <li><input type="checkbox" name ="industry" value="ml" checked/>Machine Learning</li>
+                 <%} else {%>
+                 <li><input type="checkbox" name ="industry" value="ml"/>Machine Learning</li>
+                 <% } %>
+                 <% if (isCheckedProdDesign){ %>
+                 <li><input type="checkbox" name ="industry" value="prodDesign" checked/>Product Design</li>
+                 <%} else {%>
+                 <li><input type="checkbox" name ="industry" value="prodDesign"/>Product Design</li>
+                 <% } %>
+                 <% if (isCheckedProdMgmt){ %>
+                 <li><input type="checkbox" name ="industry" value="prodMgmt" checked/>Product Management</li>
+                 <%} else {%>
+                 <li><input type="checkbox" name ="industry" value="prodMgmt"/>Product Management</li>
+                 <% } %>
+                 <% if (isCheckedSWE){ %>
+                 <li><input type="checkbox" name ="industry" value="software engineering" checked/>Software Engineering</li>
+                 <% } else { %>
+                    <li><input type="checkbox" name ="industry" value="software engineering"/>Software Engineering</li>
+                 <% } %>
+                 <% if (isCheckedSystems){ %>
+                 <li><input type="checkbox" name ="industry" value="systems" checked/>Systems</li>
+                 <%} else {%>
+                 <li><input type="checkbox" name ="industry" value="systems"/>Systems</li>
+                 <% } %>
+                 <% if (isCheckedUiUx){ %>
+                 <li><input type="checkbox" name ="industry" value="uiux" checked/>UI/UX</li>
+                 <%} else {%>
+                 <li><input type="checkbox" name ="industry" value="uiux"/>UI/UX</li>
+                 <% } %>
+                 <% if (isCheckedOther){ %>
+                 <li><input type="checkbox" name ="industry" value="other" checked/>Other</li>
+                 <%} else {%>
+                 <li><input type="checkbox" name ="industry" value="other"/>Other</li>
+                 <% } %>
+                </ul>
         </div>
 
         <p><label>If "Other", please specify: <input type=text name="otherInterest"></label></p>

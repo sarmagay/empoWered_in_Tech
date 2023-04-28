@@ -25,13 +25,14 @@
 
    <p><label>Opportunity Type:
    <select name="oppType" required>
-       <option value="">Choose Type</option>
-       <option value="conference">Conference</option>
-       <option value="fellowship">Fellowship</option>
-       <option value="industry">Internship</option>
-       <option value="research">Research</option>
-       <option value="workshop">Workshop</option>
-       <option value="other">Other</option>
+       <option name="type" value="">Choose Type</option>
+       <option name="type" value="Conference">Conference</option>
+       <option name="type" value="Fellowship">Fellowship</option>
+       <option name="type" value="Full-time Job">Full-time Job</option>
+       <option name="type" value="Internship">Internship</option>
+       <option name="type" value="Research">Research</option>
+       <option name="type" value="Workshop">Workshop</option>
+       <option name="type" value="Other">Other</option>
    </select>
    </label></p>
 
@@ -72,12 +73,24 @@
 
 
    <p><label>Expiration (optional):
-       <% let endDate = new Date();
-       console.log(endDate);
+       <% let todayDate = new Date();
+       let month;
+       if (todayDate.getMonth() + 1 < 10){month = "0" + String(todayDate.getMonth() + 1);}
+       else{month = String(todayDate.getMonth() + 1);};
+       let strTodayDate = "" + String(todayDate.getFullYear()) + "-" 
+                        + month + "-"
+                        + String(todayDate.getDate());
+
+       let endDate = new Date();
        endDate.setFullYear(endDate.getFullYear() + 2);
-       console.log(endDate);
-       let todayDate = new Date(); %>
-       <input name="due" type=date value="<%= todayDate %>" min="2023-04-12" max="<%= endDate %>">
+       let endMonth;
+       if (endDate.getMonth() + 1 < 10){endMonth = "0" + String(endDate.getMonth() + 1);}
+       else{endMonth = String(endDate.getMonth() + 1);};
+       let strEndDate = "" + String(endDate.getFullYear()) + "-" 
+                        + endMonth + "-"
+                        + String(endDate.getDate()); %>
+                        
+       <input name="due" type=date value="<%=strTodayDate%>" min="2023-04-12" max="<%= strEndDate %>">
    </label></p>
 
 

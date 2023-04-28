@@ -14,7 +14,7 @@
 <form class="form"
      id="opportunityForm"
      method="POST"
-     action="post/update/:<%= opp.oid %>"> <!--CHANGE THIS-->
+     action="/updatePost/<%= opp.oid %>">
    <p><label>Opportunity Name: <input name="opportunityName" value="<%= opp.name %>" required></label></p>
 
 
@@ -23,13 +23,42 @@
 
    <p><label>Opportunity Type:
    <select name="oppType" value="<%= opp.type %>"" required>
-       <option value=""><%=opp.type%></option>
-       <option value="conference">Conference</option>
-       <option value="fellowship">Fellowship</option>
-       <option value="industry">Industry</option>
-       <option value="research">Research</option>
-       <option value="workshop">Workshop</option>
-       <option value="other">Other</option>
+       <option name="type" value="">Choose type</option>
+       <% if (isSelectedConf){ %>
+       <option name="type" value="Conference" selected>Conference</option>
+       <% } else { %>
+       <option name="type" value="Conference">Conference</option>
+       <% } %>
+       <% if (isSelectedFel){ %>
+       <option name="type" value="Fellowship" selected>Fellowship</option>
+       <% } else { %>
+       <option name="type" value="Fellowship">Fellowship</option>
+       <% } %>
+       <% if (isSelectedJob){ %>
+       <option name="type" value="Full-time Job" selected>Full-time Job</option>
+       <% } else { %>
+       <option name="type" value="Full-time Job">Full-time Job</option>
+       <% } %>
+       <% if (isSelectedInt){ %>
+       <option name="type" value="Internship" selected>Internship</option>
+       <% } else { %>
+       <option name="type" value="Internship">Internship</option>
+       <% } %>
+       <% if (isSelectedRes){ %>
+       <option name="type" value="Research" selected>Research</option>
+       <% } else { %>
+       <option name="type" value="Research">Research</option>
+       <% } %>
+       <% if (isSelectedWork){ %>
+       <option name="type" value="Workshop" selected>Workshop</option>
+       <% } else { %>
+       <option name="type" value="Workshop">Workshop</option>
+       <% } %>
+       <% if (isSelectedOther){ %>
+       <option name="type" value="Other" selected>Other</option>
+       <% } else { %>
+       <option name="type" value="Other">Other</option>
+       <% } %>
    </select>
    </label></p>
 
@@ -42,24 +71,73 @@
 
    <div id="oppSubfieldDropdown" class="dropdown-check-list" tabindex="100">
        <span class="oppSubfield">Choose Opportunity Subfield(s):</span>
-       <ul class="items"> <%# opp.subfield which is an array, want to loop through it %>
-        <%# for el in opp.subfield:  %>
-         <li><input type="checkbox" name ="subfield" value="bioinformatics"/>Bioinformatics </li>
-         <%# checked versioon %>
-         <%# <li><input type="checkbox" name ="subfield" value="bioinformatics" checked/>Bioinformatics </li> %>
+       <ul class="items">
+        <% if (isCheckedBio){ %>
+         <li><input type="checkbox" name ="subfield" value="bioinformatics" checked/>Bioinformatics </li>
+         <% } else { %>
+         <%# <li><input type="checkbox" name ="subfield" value="bioinformatics"/>Bioinformatics </li> %>
+         <% } %>
+         <% if (isCheckedCloud){ %>
+         <li><input type="checkbox" name ="subfield" value="cloud" checked/>Cloud Computing/Development</li>
+         <% } else {%>
          <li><input type="checkbox" name ="subfield" value="cloud"/>Cloud Computing/Development</li>
+         <% } %>
+         <% if (isCheckedCompVision){ %>
+         <li><input type="checkbox" name ="subfield" value="compVision" checked/>Computer Vision</option> </li>
+         <% } else {%>
          <li><input type="checkbox" name ="subfield" value="compVision"/>Computer Vision</option> </li>
+         <% } %>
+         <% if (isCheckedDataScience){ %>
+         <li><input type="checkbox" name ="subfield" value="dataScience" checked/>Data Science </li>
+         <% } else {%>
          <li><input type="checkbox" name ="subfield" value="dataScience"/>Data Science </li>
+         <% } %>
+         <% if (isCheckedGraphics){ %>
+         <li><input type="checkbox" name ="subfield" value="graphics" checked/>Graphics </li>
+         <%} else {%>
          <li><input type="checkbox" name ="subfield" value="graphics"/>Graphics </li>
+         <% } %>
+         <% if (isCheckedHci){ %>
+         <li><input type="checkbox" name ="subfield" value="hci" checked/>Human-Computer Interaction </li>
+         <% } else {%>
          <li><input type="checkbox" name ="subfield" value="hci"/>Human-Computer Interaction </li>
+         <% } %>
+         <% if (isCheckedML){ %>
+         <li><input type="checkbox" name ="subfield" value="ml" checked/>Machine Learning</li>
+         <%} else {%>
          <li><input type="checkbox" name ="subfield" value="ml"/>Machine Learning</li>
+         <% } %>
+         <% if (isCheckedProdDesign){ %>
+         <li><input type="checkbox" name ="subfield" value="prodDesign" checked/>Product Design</li>
+         <%} else {%>
          <li><input type="checkbox" name ="subfield" value="prodDesign"/>Product Design</li>
+         <% } %>
+         <% if (isCheckedProdMgmt){ %>
+         <li><input type="checkbox" name ="subfield" value="prodMgmt" checked/>Product Management</li>
+         <%} else {%>
          <li><input type="checkbox" name ="subfield" value="prodMgmt"/>Product Management</li>
-         <li><input type="checkbox" name ="subfield" value="swe"/>Software Engineering</li>
+         <% } %>
+         <% if (isCheckedSWE){ %>
+         <li><input type="checkbox" name ="subfield" value="software engineering" checked/>Software Engineering</li>
+         <% } else { %>
+            <li><input type="checkbox" name ="subfield" value="software engineering"/>Software Engineering</li>
+         <% } %>
+         <% if (isCheckedSystems){ %>
+         <li><input type="checkbox" name ="subfield" value="systems" checked/>Systems</li>
+         <%} else {%>
          <li><input type="checkbox" name ="subfield" value="systems"/>Systems</li>
+         <% } %>
+         <% if (isCheckedUiUx){ %>
+         <li><input type="checkbox" name ="subfield" value="uiux" checked/>UI/UX</li>
+         <%} else {%>
          <li><input type="checkbox" name ="subfield" value="uiux"/>UI/UX</li>
+         <% } %>
+         <% if (isCheckedOther){ %>
+         <li><input type="checkbox" name ="subfield" value="other" checked/>Other</li>
+         <%} else {%>
          <li><input type="checkbox" name ="subfield" value="other"/>Other</li>
-       </ul>
+         <% } %>
+        </ul>
      </div>
 
 
@@ -75,8 +153,13 @@
    <p><label>Expiration (optional):
        <% let endDate = new Date();
        endDate.setFullYear(endDate.getFullYear() + 2);
-       let todayDate = new Date(); %>
-       <input name="due" type=date value="<%= opp.expiration %>" min="2023-04-12" max="<%= endDate %>">
+       let endMonth;
+       if (endDate.getMonth() + 1 < 10){endMonth = "0" + String(endDate.getMonth() + 1);}
+       else{endMonth = String(endDate.getMonth() + 1);};
+       let strEndDate = "" + String(endDate.getFullYear()) + "-" 
+                        + endMonth + "-"
+                        + String(endDate.getDate()); %>
+       <input name="due" type=date value="<%= opp.expiration %>" min="2023-04-12" max="<%= strEndDate %>">
    </label></p>
 
 
@@ -88,11 +171,8 @@
    </label></p>
 
 
-   <p><label>Your Username: <input type=text name="addedBy" value="<%= opp.addedBy.name %>" required></label></p>
+   <p>Posted by: <%= addedBy.name %>, <%= addedBy.email %></p>
 
-
-
-   <%- include("partials/commentForm.ejs") %>
    <p><button type="submit">Update!</button></p>
 </form>
 
