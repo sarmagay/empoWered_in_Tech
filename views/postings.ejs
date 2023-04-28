@@ -11,16 +11,6 @@
 <body>
     <%- include("partials/navbar.ejs") %>
 
-    <form method="GET" action="/do-postings">
-        <div id="filterBtn" name=""filterBtn>
-            <button class="btn active" name="button" value="allOpBtn"> All opportunities</button>
-            <button class="btn" name="button" value="internshipBtn"> Internship</button>
-            <button class="btn" name="button" value="jobBtn"> Full-Time Job</button>
-            <button class="btn" name="button" value="researchBtn"> Research</button>
-            <button class="btn" name="button" value="remoteBtn"> Remote</button>
-        </div>
-    </form>
-
         <form class="search" method="GET" action="https://cs.wellesley.edu/~cs304flask/cgi-bin/dump/cgi"> <!--Change this!!!-->
         <p> <input type="text" required name="term" value="search">
         <label>kind
@@ -36,11 +26,21 @@
 
     <h1>Computer Science Opportunities</h1>
 
+    <form method="GET" action="/do-postings">
+        <div id="filterBtn" name=""filterBtn>
+            <button class="btn active" name="button" value="allOpBtn"> All opportunities</button>
+            <button class="btn" name="button" value="internshipBtn"> Internship</button>
+            <button class="btn" name="button" value="jobBtn"> Full-Time Job</button>
+            <button class="btn" name="button" value="researchBtn"> Research</button>
+            <button class="btn" name="button" value="remoteBtn"> Remote</button>
+        </div>
+    </form>
+
     <ul>
         <% list.forEach( (elt) => {%>
             <li>
                 <a href="/post/<%= elt.oid %>">
-                   <div class="container" id="feedBox"> 
+                   <div class="feedContainer" id="feedBox"> 
                         <p> <%= elt.name %> </p>
                         <p> <%= elt.type %> </p>
                         <p> <%= elt.org %> </p>
