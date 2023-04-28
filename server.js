@@ -82,7 +82,8 @@ app.get('/signUp', (req, res) => {
 
 // delete once user sessions are figured out
 app.get('/userForm', (req, res) => {
-    return res.render('userForm.ejs');
+    let currUser = req.session.username;
+    return res.render('userForm.ejs', {email: currUser});
 })
 
 
@@ -302,6 +303,7 @@ app.post('/login', async (req, res) => {
         var username = req.body.uname;
         var password = req.body.psw;
         var existingUser = await db.collection(USERS).findOne({email: username});
+        // need to check password
         if (!existingUser) {
             req.flash('error', `User with email ${username} does not exist, please try again.`);
             return res.redirect('/login');
@@ -332,7 +334,9 @@ app.post('/signUp', async (req, res) => {
         return res.render('signUp.ejs');
     }
     else {
-        return res.render('userForm.ejs', {email: uname}); 
+        req.session.username = email;
+        req.session.logged_in = true;
+        return res.render('userForm.ejs'); 
     }
 })
 
