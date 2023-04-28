@@ -63,14 +63,7 @@ const OPPS = 'opps';
 
 // main page. This shows the use of session cookies
 app.get('/', (req, res) => {
-    // comment out?
-    let uid = req.session.uid || 'unknown';
-    console.log('uid', uid);
-    let visits = req.session.visits || 0;
-    visits++;
-    req.session.visits = visits;
-    console.log('uid', uid);
-    return res.render('index.ejs', {uid, visits});
+    return res.render('index.ejs');
 });
 
 app.get('/login', (req, res) => {
@@ -78,24 +71,38 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/signUp', (req, res) => {
-    return res.render('signUp.ejs', {action: '/userForm/', data: req.query});
+    return res.render('signUp.ejs');
 })
 
 // delete once user sessions are figured out
 app.get('/userForm', (req, res) => {
-    let currUser = req.session.username;
-    return res.render('userForm.ejs', {email: currUser});
+    try {
+        let currUser = req.session.username;
+        return res.render('userForm.ejs', {email: currUser});
+    } catch (error) {
+        req.flash('error', `Something went wrong: ${error}`); // maybe change to "have not signed up"?
+        return res.redirect('/signUp');
+    }
 })
 
 
 app.get('/postings', async (req, res) => {
-    const db = await Connection.open(mongoUri, EMPOWER);
-    let allOpps = await db.collection(OPPS).find({}).toArray();
-    // let currentUser = await db.collection(USERS).find({}).toArray(); // must figure out how to find currentUser
-    let userUID = 1;
-    let userName = 'Alexa Halim';
-    // need user name and uid for navbar
-    return res.render('postings.ejs', {list: allOpps, userUID: userUID, userName: userName});
+    if (req.session.logged_in) {
+        const db = await Connection.open(mongoUri, EMPOWER);
+        let allOpps = await db.collection(OPPS).find({}).toArray();
+        let currUser = req.session.username;
+        /* uncomment when passwords figured out
+        // let currentUser = await db.collection(USERS).find({}).toArray(); // must figure out how to find currentUser
+
+        */
+        let userUID = 1;
+        let userName = 'Alexa Halim';
+        // need user name and uid for navbar
+        return res.render('postings.ejs', {list: allOpps, userUID: userUID, userName: userName});
+    } else {
+        req.flash('error', `User must be logged in`);
+        return res.redirect('/login');
+    }
 })
 
 
@@ -304,7 +311,7 @@ app.post('/login', async (req, res) => {
     try {
         var username = req.body.uname;
         var password = req.body.psw;
-        var existingUser = await db.collection(USERS).findOne({email: username});
+        var existingUser = await DB.collection(USERS).findOne({email: username});
         if (!existingUser) {
             req.flash('error', `User with email ${username} does not exist, please try again.`);
             return res.redirect('/login');
@@ -317,10 +324,12 @@ app.post('/login', async (req, res) => {
         req.flash('info', `Logged in as ` + username);
         req.session.username = username;
         req.session.logged_in = true;
+        req.session.uid = existingUser.uid;
+        req.session.name = existinUser.name;
         return res.redirect('/postings');
     }   catch (error) {
         req.flash('error', `Something went wrong: ${error}`);
-        return res.redirect('/login');
+        return res.render('login.ejs');
     }
 });
 
@@ -335,6 +344,16 @@ app.post('/signUp', async (req, res) => {
         return res.render('signUp.ejs');
     }
     else {
+        const newUser = await = db.collection(USERS).updateOne(
+            {email: email},
+            {$setOnInsert:
+                {
+                    email: email,
+                }
+            },
+            {upsert: true}
+        )
+        console.log(newUser);
         return res.render('userForm.ejs', {email: uname}); 
     }
 })
@@ -343,35 +362,44 @@ app.post('/userForm', async (req, res) => {
     // let user = req.session.username;
     // if req.session.logged_in and flash redirect back to log in
     // make sure necessary fields are filled
-    console.log(req.body);
-    let name = req.body.fullName;
-    let uid = req.body.uid;
-    // let email = req.body.email;
-    let status = req.body.userStatus;
-    let industry = req.body.industry;
-    let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
-    let majors = req.body.majors.split(", ")
-    let minors = req.body.minors;
-    const db = await Connection.open(mongoUri, EMPOWER);
-    const inserted = await db.collection(USERS).updateOne(
-        {uid: uid},
-        { $setOnInsert:
-            {
-                uid: uid,
-                name: name,
-                // email: email,
-                status: status,
-                classYear: year,
-                major: majors,
-                minor: minors,
-                industry: industry,
-                favorited: [],
-            }
-        },
-        { upsert: true }
-    )
-    console.log(inserted);
-    res.redirect('/user/' + uid);
+    try {
+        console.log(req.body);
+        let name = req.body.fullName;
+        let uid = req.body.uid;
+        // let email = req.body.email;
+        let status = req.body.userStatus;
+        let industry = req.body.industry;
+        let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
+        let majors = req.body.majors.split(", ")
+        let minors = req.body.minors;
+        const db = await Connection.open(mongoUri, EMPOWER);
+        const inserted = await db.collection(USERS).updateOne(
+            {email: req.session.username},
+            { $setOnInsert:
+                {
+                    uid: uid,
+                    name: name,
+                    // email: email,
+                    status: status,
+                    classYear: year,
+                    major: majors,
+                    minor: minors,
+                    industry: industry,
+                    favorited: [],
+                }
+            },
+            { upsert: true }
+        )
+        console.log(inserted);
+        req.session.username = username;
+        req.session.logged_in = true;
+        req.session.uid = uid
+        req.session.name = name;
+        res.redirect('/user/' + uid);
+    } catch (error) {
+        req.flash('error', `Something went wrong: ${error}`);
+        return res.redirect('/userForm');
+    }
 })
 
 app.post('/oppForm', async (req, res) => {
