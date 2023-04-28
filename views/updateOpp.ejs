@@ -153,8 +153,13 @@
    <p><label>Expiration (optional):
        <% let endDate = new Date();
        endDate.setFullYear(endDate.getFullYear() + 2);
-       let todayDate = new Date(); %>
-       <input name="due" type=date value="<%= opp.expiration %>" min="2023-04-12" max="<%= endDate %>">
+       let endMonth;
+       if (endDate.getMonth() + 1 < 10){endMonth = "0" + String(endDate.getMonth() + 1);}
+       else{endMonth = String(endDate.getMonth() + 1);};
+       let strEndDate = "" + String(endDate.getFullYear()) + "-" 
+                        + endMonth + "-"
+                        + String(endDate.getDate()); %>
+       <input name="due" type=date value="<%= opp.expiration %>" min="2023-04-12" max="<%= strEndDate %>">
    </label></p>
 
 
