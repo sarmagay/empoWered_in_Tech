@@ -90,15 +90,10 @@ app.get('/postings', async (req, res) => {
     if (req.session.logged_in) {
         const db = await Connection.open(mongoUri, EMPOWER);
         let allOpps = await db.collection(OPPS).find({}).toArray();
-        let currUser = req.session.username;
-        /* uncomment when passwords figured out
-        // let currentUser = await db.collection(USERS).find({}).toArray(); // must figure out how to find currentUser
-
-        */
         let userUID = 1;
         let userName = 'Alexa Halim';
         // need user name and uid for navbar
-        return res.render('postings.ejs', {list: allOpps, userUID: userUID, userName: userName});
+        return res.render('postings.ejs', {list: allOpps, userUID: userUID, userName: userName}); // change to req.session.name and req.session.uid
     } else {
         req.flash('error', `User must be logged in`);
         return res.redirect('/login');
@@ -125,79 +120,89 @@ app.get('/do-postings', async (req, res) => {
     else if (btnClicked == "remoteBtn"){
         showOpps = await db.collection(OPPS).find({location:{$regex: /remote/i }}).toArray();
     }
-
-    // let currentUser = await db.collection(USERS).find({}).toArray(); // must figure out how to find currentUser
     let userUID = 1;
     let userName = 'Alexa Halim';
     // need user name and uid for navbar
-    return res.render('postings.ejs', {list: showOpps, userUID: userUID, userName: userName});
+    return res.render('postings.ejs', {list: showOpps, userUID: userUID, userName: userName}); // change to req.session.name and req.session.uid
 })
 
 app.get('/oppForm', (req, res) => {
-    let userUID = "1";
-    let userName = 'Alexa Halim';
-    // need user name and uid for navbar
-    return res.render('oppForm.ejs', {userUID: userUID, userName: userName});
+    if (req.session.logged_in) {
+        let userUID = "1";
+        let userName = 'Alexa Halim';
+        // need user name and uid for navbar
+        return res.render('oppForm.ejs', {userUID: userUID, userName: userName}); // change to req.session.name and req.session.uid
+    } else {
+        req.flash('error', `User must be logged in`);
+        return res.redirect('/login');
+    }
 })
 
 app.get('/post/:oid', async (req, res) => {
-    // need data from corresponding opportunity doc
-    let postOID = parseInt(req.params.oid);
-    console.log(postOID);
-    const db = await Connection.open(mongoUri, EMPOWER);
-    let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
-    console.log(opp);
-    let addedByUID = opp[0].addedBy.uid;
-    console.log(addedByUID);
-    let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
-    console.log(addedBy);
-    // need user name and uid for navbar
-    let userUID = 1;
-    let userName = 'Alexa Halim';
-    return res.render('postPage.ejs', {post: opp[0], addedBy: addedBy[0], userUID: userUID, userName: userName});
+    if (req.session.logged_in) {
+        // need data from corresponding opportunity doc
+        let postOID = parseInt(req.params.oid);
+        console.log(postOID);
+        const db = await Connection.open(mongoUri, EMPOWER);
+        let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
+        console.log(opp);
+        let addedByUID = opp[0].addedBy.uid;
+        console.log(addedByUID);
+        let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
+        console.log(addedBy);
+        // need user name and uid for navbar
+        let userUID = 1;
+        let userName = 'Alexa Halim';
+        return res.render('postPage.ejs', {post: opp[0], addedBy: addedBy[0], userUID: userUID, userName: userName}); // change to req.session.name and req.session.uid
+    } else {
+        req.flash('error', `User must be logged in`);
+        return res.redirect('/login');
+    }
 })
 
 app.get('/user/:uid', async (req, res) => {
     // need data from corresponding userProfile
     let currUserUID = req.params.uid;
-    const db = await Connection.open(mongoUri, EMPOWER);
-    let user = await db.collection(USERS).find({uid: currUserUID}).toArray(); //not finding anybody, are we sure the user database has been created?
-    console.log(user);
+    if (req.session.logged_in) {
+        if (req.session.uid === currUserUID) {
+            const db = await Connection.open(mongoUri, EMPOWER);
+            let user = await db.collection(USERS).find({uid: currUserUID}).toArray(); //not finding anybody, are we sure the user database has been created?
+            console.log(user);
 
-    //setting up the checkbox pre-select values to render in the userProfile.ejs
-    let isCheckedArr = user[0].industry;
-    let isCheckedBio = false;
-    let isCheckedCloud = false;
-    let isCheckedCompVision = false;
-    let isCheckedDataScience = false;
-    let isCheckedGraphics = false;
-    let isCheckedHci = false;
-    let isCheckedML = false;
-    let isCheckedProdDesign = false;
-    let isCheckedProdMgmt = false;
-    let isCheckedSWE = false;
-    let isCheckedSystems = false;
-    let isCheckedUiUx = false;
-    let isCheckedOther = false;
+            //setting up the checkbox pre-select values to render in the userProfile.ejs
+            let isCheckedArr = user[0].industry;
+            let isCheckedBio = false;
+            let isCheckedCloud = false;
+            let isCheckedCompVision = false;
+            let isCheckedDataScience = false;
+            let isCheckedGraphics = false;
+            let isCheckedHci = false;
+            let isCheckedML = false;
+            let isCheckedProdDesign = false;
+            let isCheckedProdMgmt = false;
+            let isCheckedSWE = false;
+            let isCheckedSystems = false;
+            let isCheckedUiUx = false;
+            let isCheckedOther = false;
 
-    if (isCheckedArr.includes("bioinformatics")){isCheckedBio = true;};
-    if (isCheckedArr.includes("cloud")){isCheckedCloud = true;};
-    if (isCheckedArr.includes("compVision")){isCheckedCompVision = true;};
-    if (isCheckedArr.includes("dataScience")){isCheckedDataScience = true;};
-    if (isCheckedArr.includes("graphics")){isCheckedGraphics = true;};
-    if (isCheckedArr.includes("hci")){isCheckedHci = true;};
-    if (isCheckedArr.includes("ml")){isCheckedML = true;};
-    if (isCheckedArr.includes("prodDesign")){isCheckedProdDesign = true;};
-    if (isCheckedArr.includes("prodMgmt")){isCheckedProdMgmt = true;};
-    if (isCheckedArr.includes("software engineering")){isCheckedSWE = true;};
-    if (isCheckedArr.includes("systems")){isCheckedSystems = true;};
-    if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
-    if (isCheckedArr.includes("other")){isCheckedOther = true;};
+            if (isCheckedArr.includes("bioinformatics")){isCheckedBio = true;};
+            if (isCheckedArr.includes("cloud")){isCheckedCloud = true;};
+            if (isCheckedArr.includes("compVision")){isCheckedCompVision = true;};
+            if (isCheckedArr.includes("dataScience")){isCheckedDataScience = true;};
+            if (isCheckedArr.includes("graphics")){isCheckedGraphics = true;};
+            if (isCheckedArr.includes("hci")){isCheckedHci = true;};
+            if (isCheckedArr.includes("ml")){isCheckedML = true;};
+            if (isCheckedArr.includes("prodDesign")){isCheckedProdDesign = true;};
+            if (isCheckedArr.includes("prodMgmt")){isCheckedProdMgmt = true;};
+            if (isCheckedArr.includes("software engineering")){isCheckedSWE = true;};
+            if (isCheckedArr.includes("systems")){isCheckedSystems = true;};
+            if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
+            if (isCheckedArr.includes("other")){isCheckedOther = true;};
 
-    // need user name and uid for navbar
-    let userUID = "1";
-    let userName = 'Alexa Halim';
-    return res.render('userProfile.ejs', {user: user[0], 
+            // need user name and uid for navbar
+            let userUID = "1";
+            let userName = 'Alexa Halim';
+            return res.render('userProfile.ejs', {user: user[0], 
                                           userUID: userUID, 
                                           userName: userName, 
                                           statuses: ["Alumn", "Professor", "Staff", "Student", "Affiliate"],
@@ -214,9 +219,18 @@ app.get('/user/:uid', async (req, res) => {
                                           isCheckedSystems: isCheckedSystems,
                                           isCheckedUiUx: isCheckedUiUx,
                                           isCheckedOther: isCheckedOther});
+        } else {
+            req.flash('error', `You do not have permission to view this user profile.`);
+                return res.redirect('/postings');
+        }
+    } else {
+        req.flash('error', `You must log in.`);
+        return res.redirect('/login');
+    }
 });
 
 app.get('/updatePost/:oid', async (req, res) => {
+    if (req.session.logged_in) {
     // need data from corresponding opportunity doc
     let postOID = parseInt(req.params.oid);
     const db = await Connection.open(mongoUri, EMPOWER);
@@ -302,16 +316,20 @@ app.get('/updatePost/:oid', async (req, res) => {
                                         isSelectedRes: isSelectedRes,
                                         isSelectedWork: isSelectedWork,
                                         isSelectedOther: isSelectedOther});
+    } else {
+        req.flash('error', `You must login.`);
+        return res.redirect('/login');
+    }
 });
 
 // shows how logins might work by setting a value in the session
 // This is a conventional, non-Ajax, login, so it redirects to main page 
 app.post('/login', async (req, res) => {
-    const db = await Connection.open(mongoUri, DB);
+    const db = await Connection.open(mongoUri, empower);
     try {
         var username = req.body.uname;
         var password = req.body.psw;
-        var existingUser = await DB.collection(USERS).findOne({email: username});
+        var existingUser = await db.collection(USERS).findOne({email: username});
         if (!existingUser) {
             req.flash('error', `User with email ${username} does not exist, please try again.`);
             return res.redirect('/login');
@@ -335,7 +353,8 @@ app.post('/login', async (req, res) => {
 
 app.post('/signUp', async (req, res) => {
     let email = req.body.uname;
-    let users = await DB.collection(USERS).find({email: email}).toArray();
+    const db = await Connection.open(mongoUri, empower);
+    let users = await db.collection(USERS).find({email: email}).toArray();
     if (users.length != 0) {
         req.flash('error', `User with email ${email} already in use! Please log in.`)
     }
@@ -673,26 +692,6 @@ app.post('/logout/', (req, res) => {
     req.session.uid = false;
     req.session.logged_in = false;
     res.redirect('/');
-});
-
-// two kinds of forms (GET and POST), both of which are pre-filled with data
-// from previous request, including a SELECT menu. Everything but radio buttons
-
-app.get('/form/', (req, res) => {
-    console.log('get form');
-    return res.render('form.ejs', {action: '/form/', data: req.query });
-});
-
-app.post('/form/', (req, res) => {
-    console.log('post form');
-    return res.render('form.ejs', {action: '/form/', data: req.body });
-});
-
-app.get('/staffList/', async (req, res) => {
-    const db = await Connection.open(mongoUri, WMDB);
-    let all = await db.collection(STAFF).find({}).toArray();
-    console.log('len', all.length, 'first', all[0]);
-    return res.render('list.ejs', {listDescription: 'all staff', list: all});
 });
 
 // ================================================================
