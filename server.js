@@ -66,7 +66,6 @@ app.get('/', (req, res) => {
     // comment out?
     let uid = req.session.uid || 'unknown';
     console.log('uid', uid);
-    */
     let visits = req.session.visits || 0;
     visits++;
     req.session.visits = visits;
@@ -306,6 +305,33 @@ app.post('/login', (req, res) => {
 
 app.post('/signUp', (req, res) => {
     res.redirect('/userForm/');
+     // ADDING PASSWORD FUNCTIONALITY
+     let email = req.body.uname;
+     let password = req.body.psw;
+     let salt = bcrypt.genSaltSync();
+     //console.log("new salt ", "\t", salt);
+     let hash = bcrypt.hashSync(password, salt);
+     //console.log("signup/stored", "\t", salt);
+     //res.redirect('/userForm/');
+     //return res.render('form.ejs', {action: '/form/', data: {email, hash} });
+     /*
+     const db = await Connection.open(mongoUri, EMPOWER);
+     let inserted = await db.collection(USERS).updateOne(
+         {email: email},
+         { 
+             $setOnInsert:
+             {
+                 
+                 email: email,
+                 password: hash
+             }
+         },
+             { upsert: true }
+     )
+     */
+     //console.log(inserted);   
+     res.redirect('/userForm/');
+ 
 })
 
 app.post('/userForm', async (req, res) => {
