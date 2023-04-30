@@ -93,6 +93,7 @@ app.get('/search', async (req, res) => {
     let category = req.query.category;
     console.log("submitted name: " + term + ", type: " + category);
     let results = db.collection(OPPS).find({category: new RegExp(term, "gi")}).toArray();
+    console.log(results)
     let userUID = 1;
     let userName = 'Alexa Halim';
     return res.render('postings.ejs', {list: results, userUID: userUID, userName: userName});
@@ -143,20 +144,25 @@ app.get('/oppForm', (req, res) => {
 })
 
 app.get('/post/:oid', async (req, res) => {
-    // need data from corresponding opportunity doc
-    let postOID = parseInt(req.params.oid);
-    console.log(postOID);
-    const db = await Connection.open(mongoUri, EMPOWER);
-    let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
-    console.log(opp);
-    let addedByUID = opp[0].addedBy.uid;
-    console.log(addedByUID);
-    let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
-    console.log(addedBy);
-    // need user name and uid for navbar
-    let userUID = 1;
-    let userName = 'Alexa Halim';
-    return res.render('postPage.ejs', {post: opp[0], addedBy: addedBy[0], userUID: userUID, userName: userName});
+    if (req.session.logged_in) {
+        // need data from corresponding opportunity doc
+        let postOID = parseInt(req.params.oid);
+        console.log(postOID);
+        const db = await Connection.open(mongoUri, EMPOWER);
+        let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
+        console.log(opp);
+        let addedByUID = opp[0].addedBy.uid;
+        console.log(addedByUID);
+        let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
+        console.log(addedBy);
+        // need user name and uid for navbar
+        let userUID = 1;
+        let userName = 'Alexa Halim';
+        return res.render('postPage.ejs', {post: opp[0], addedBy: addedBy[0], userUID: userUID, userName: userName}); // change to req.session.name and req.session.uid
+    } else {
+        req.flash('error', `User must be logged in`);
+        return res.redirect('/login');
+    }
 })
 
 app.get('/user/:uid', async (req, res) => {
