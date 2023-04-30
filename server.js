@@ -335,35 +335,38 @@ app.post('/login', async (req, res) => {
 
 app.post('/signUp', async (req, res) => {
     let email = req.body.uname;
-    let users = await DB.collection(USERS).find({email: email}).toArray();
+    let db = await Connection.open(mongoUri, EMPOWER);
+    let users = await db.collection(USERS).find({email: email}).toArray();
+    // ADDING PASSWORD FUNCTIONALITY
+    let password = req.body.psw.toString();
+    let salt = bcrypt.genSaltSync();
+    let numSaltRounds = 1;
+    //console.log("new salt ", "\t", salt);
+    let hash = bcrypt.hash(password, salt);
+    //console.log("signup/stored", "\t", salt);
+    //res.redirect('/userForm/');
     if (users.length != 0) {
-        req.flash('error', `User with email ${email} already in use! Please log in.`)
+        req.flash('error', `User with email ${email} already in use! Please log in.`);
     }
     else if (email.slice(-14) != '@wellesley.edu') {
-        req.flash('error', `Error: Email must be a "@wellesley.edu" email!`)
+        req.flash('error', `Error: Email must be a "@wellesley.edu" email!`);
         return res.render('signUp.ejs');
     }
     else {
-        const newUser = await = db.collection(USERS).updateOne(
+        const newUser = await db.collection(USERS).updateOne(
             {email: email},
             {$setOnInsert:
                 {
                     email: email,
+                    password: hash
                 }
             },
             {upsert: true}
         )
         console.log(newUser);
-        return res.render('userForm.ejs', {email: uname}); 
+        return res.render('userForm.ejs', {email: email}); 
     }
-     // ADDING PASSWORD FUNCTIONALITY
-     let email = req.body.uname;
-     let password = req.body.psw;
-     let salt = bcrypt.genSaltSync();
-     //console.log("new salt ", "\t", salt);
-     let hash = bcrypt.hashSync(password, salt);
-     //console.log("signup/stored", "\t", salt);
-     //res.redirect('/userForm/');
+     
      //return res.render('form.ejs', {action: '/form/', data: {email, hash} });
      /*
      const db = await Connection.open(mongoUri, EMPOWER);
@@ -381,7 +384,7 @@ app.post('/signUp', async (req, res) => {
      )
      */
      //console.log(inserted);   
-     res.redirect('/userForm/');
+     //res.redirect('/userForm/');
  
 })
 
