@@ -92,7 +92,7 @@ app.get('/search', async (req, res) => {
     let term = req.query.term;
     let category = req.query.category;
     console.log("submitted name: " + term + ", type: " + category);
-    let results = db.collection(OPPS).find({category: new RegExp(term, "gi")}).toArray();
+    let results = await db.collection(OPPS).find({category: new RegExp(term, "gi")}).toArray();
     console.log(results)
     let userUID = 1;
     let userName = 'Alexa Halim';
