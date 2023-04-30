@@ -144,6 +144,7 @@ app.get('/post/:oid', async (req, res) => {
     console.log(addedByUID);
     let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
     console.log(addedBy);
+
     // need user name and uid for navbar
     let userUID = 1;
     let userName = 'Alexa Halim';
