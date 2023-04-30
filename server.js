@@ -325,7 +325,7 @@ app.get('/updatePost/:oid', async (req, res) => {
 // shows how logins might work by setting a value in the session
 // This is a conventional, non-Ajax, login, so it redirects to main page 
 app.post('/login', async (req, res) => {
-    const db = await Connection.open(mongoUri, empower);
+    const db = await Connection.open(mongoUri, EMPOWER);
     try {
         var username = req.body.uname;
         var password = req.body.psw;
@@ -358,7 +358,7 @@ app.post('/signUp', async (req, res) => {
     // ADDING PASSWORD FUNCTIONALITY
     let password = req.body.psw.toString();
     let salt = bcrypt.genSaltSync();
-    let numSaltRounds = 1;
+    //let numSaltRounds = 1;
     //console.log("new salt ", "\t", salt);
     let hash = bcrypt.hash(password, salt);
     //console.log("signup/stored", "\t", salt);
@@ -384,25 +384,6 @@ app.post('/signUp', async (req, res) => {
         console.log(newUser);
         return res.render('userForm.ejs', {email: email}); 
     }
-     
-     //return res.render('form.ejs', {action: '/form/', data: {email, hash} });
-     /*
-     const db = await Connection.open(mongoUri, EMPOWER);
-     let inserted = await db.collection(USERS).updateOne(
-         {email: email},
-         { 
-             $setOnInsert:
-             {
-                 
-                 email: email,
-                 password: hash
-             }
-         },
-             { upsert: true }
-     )
-     */
-     //console.log(inserted);   
-     //res.redirect('/userForm/');
  
 })
 
