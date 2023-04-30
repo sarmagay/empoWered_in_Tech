@@ -341,7 +341,7 @@ app.post('/login', async (req, res) => {
 
 app.post('/signUp', async (req, res) => {
     let email = req.body.uname;
-    const db = await Connection.open(mongoUri, empower);
+    let db = await Connection.open(mongoUri, EMPOWER);
     let users = await db.collection(USERS).find({email: email}).toArray();
     // ADDING PASSWORD FUNCTIONALITY
     let password = req.body.psw.toString();
@@ -359,17 +359,18 @@ app.post('/signUp', async (req, res) => {
         return res.render('signUp.ejs');
     }
     else {
-        const newUser = await = db.collection(USERS).updateOne(
+        const newUser = await db.collection(USERS).updateOne(
             {email: email},
             {$setOnInsert:
                 {
                     email: email,
+                    password: hash
                 }
             },
             {upsert: true}
         )
         console.log(newUser);
-        return res.render('userForm.ejs', {email: uname}); 
+        return res.render('userForm.ejs', {email: email}); 
     }
  
 })
