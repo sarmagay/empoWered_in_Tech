@@ -11,14 +11,14 @@
 <body>
     <%- include("partials/navbar.ejs") %>
 
-        <form class="search" method="GET" action="https://cs.wellesley.edu/~cs304flask/cgi-bin/dump/cgi"> <!--Change this!!!-->
+        <form class="search" method="GET" action="/search"> <!--Change this!!!-->
         <p> <input type="text" required name="term" value="search">
         <label>kind
                 <select required name="category">
-                    <option value="">Category</option>
-                    <option value="organization">Organization</option>
-                    <option value="opportunity name">Opportunity Name</option>
-                    <option value="location">Location</option>
+                    <option name="category" value="">Category</option>
+                    <option name="category" value="org">Organization</option>
+                    <option name="category" value="name">Opportunity Name</option>
+                    <option name="category" value="location">Location</option>
                 </select>
         </label>
         <input type="submit" value="search"></p>
