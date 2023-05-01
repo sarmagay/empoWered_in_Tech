@@ -63,14 +63,7 @@ const OPPS = 'opps';
 
 // main page. This shows the use of session cookies
 app.get('/', (req, res) => {
-    // comment out?
-    let uid = req.session.uid || 'unknown';
-    console.log('uid', uid);
-    let visits = req.session.visits || 0;
-    visits++;
-    req.session.visits = visits;
-    console.log('uid', uid);
-    return res.render('index.ejs', {uid, visits});
+    return res.render('index.ejs');
 });
 
 app.get('/login', (req, res) => {
@@ -100,13 +93,16 @@ app.get('/search', async (req, res) => {
 })
 
 app.get('/postings', async (req, res) => {
-    const db = await Connection.open(mongoUri, EMPOWER);
-    let allOpps = await db.collection(OPPS).find({}).toArray();
-    // let currentUser = await db.collection(USERS).find({}).toArray(); // must figure out how to find currentUser
-    let userUID = 1;
-    let userName = 'Alexa Halim';
-    // need user name and uid for navbar
-    return res.render('postings.ejs', {list: allOpps, userUID: userUID, userName: userName});
+    if (req.session.logged_in) {
+        const db = await Connection.open(mongoUri, EMPOWER);
+        let allOpps = await db.collection(OPPS).find({}).toArray();
+        let userUID = 1; // need to comment out later
+        let userName = 'Alexa Halim';
+        return res.render('postings.ejs', {list: allOpps, userUID: req.session.uid, userName: req.session.name});
+    } else {
+        req.flash('error', `User must be logged in`);
+        return res.redirect('/login');
+    }
 })
 
 app.get('/do-postings', async (req, res) => {
@@ -332,6 +328,8 @@ app.post('/login', async (req, res) => {
         req.flash('info', `Logged in as ` + username);
         req.session.username = username;
         req.session.logged_in = true;
+        req.session.uid = existingUser.uid;
+        req.session.name = existingUser.name;
         return res.redirect('/postings');
     }   catch (error) {
         req.flash('error', `Something went wrong: ${error}`);
@@ -379,35 +377,44 @@ app.post('/userForm', async (req, res) => {
     // let user = req.session.username;
     // if req.session.logged_in and flash redirect back to log in
     // make sure necessary fields are filled
-    console.log(req.body);
-    let name = req.body.fullName;
-    let uid = req.body.uid;
-    // let email = req.body.email;
-    let status = req.body.userStatus;
-    let industry = req.body.industry;
-    let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
-    let majors = req.body.majors.split(", ")
-    let minors = req.body.minors;
-    const db = await Connection.open(mongoUri, EMPOWER);
-    const inserted = await db.collection(USERS).updateOne(
-        {uid: uid},
-        { $setOnInsert:
-            {
-                uid: uid,
-                name: name,
-                // email: email,
-                status: status,
-                classYear: year,
-                major: majors,
-                minor: minors,
-                industry: industry,
-                favorited: [],
-            }
-        },
-        { upsert: true }
-    )
-    console.log(inserted);
-    res.redirect('/user/' + uid);
+    try {
+        console.log(req.body);
+        let name = req.body.fullName;
+        let uid = req.body.uid;
+        // let email = req.body.email;
+        let status = req.body.userStatus;
+        let industry = req.body.industry;
+        let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
+        let majors = req.body.majors.split(", ")
+        let minors = req.body.minors;
+        const db = await Connection.open(mongoUri, EMPOWER);
+        const inserted = await db.collection(USERS).updateOne(
+            {uid: uid},
+            { $setOnInsert:
+                {
+                    uid: uid,
+                    name: name,
+                    // email: email,
+                    status: status,
+                    classYear: year,
+                    major: majors,
+                    minor: minors,
+                    industry: industry,
+                    favorited: [],
+                }
+            },
+            { upsert: true }
+        )
+        console.log(inserted);
+        req.session.username = username;
+        req.session.logged_in = true;
+        req.session.uid = uid;
+        req.session.name = name;
+        res.redirect('/user/' + uid);
+    } catch (error) {
+        req.flash('error', `Something went wrong: ${error}`);
+        return res.redirect('/userForm');
+    }
 })
 
 app.post('/oppForm', async (req, res) => {
@@ -492,11 +499,15 @@ app.post('/user/:uid', async (req, res) => {
 })
 
 app.post('/user/delete/:uid', async (req, res) => {
+    req.session.uid = null;
+    req.session.name = null;
+    req.session.logged_in = false;
+    req.session.username = null;
     const userUID = req.params.uid;
     const db = await Connection.open(mongoUri, EMPOWER);
     const deletion = await db.collection(USERS).deleteOne({uid: userUID});
     console.log(deletion.acknowledged);
-    // req.flash(`info`, `User (${userUID}) was deleted successfully.`);
+    req.flash(`info`, `User (${userUID}) was deleted successfully.`);
     return res.redirect("/");
 })
 
@@ -625,56 +636,6 @@ app.post('/updatePost/:oid', async (req, res) => {
                                 isSelectedWork: isSelectedWork,
                                 isSelectedOther: isSelectedOther})
 })
-
-app.post('/set-uid/', (req, res) => {
-    console.log('in set-uid');
-    req.session.uid = req.body.uid;
-    req.session.logged_in = true;
-    res.redirect('/');
-});
-
-// shows how logins might work via Ajax
-app.post('/set-uid-ajax/', (req, res) => {
-    console.log(Object.keys(req.body));
-    console.log(req.body);
-    let uid = req.body.uid;
-    if(!uid) {
-        res.send({error: 'no uid'}, 400);
-        return;
-    }
-    req.session.uid = req.body.uid;
-    req.session.logged_in = true;
-    console.log('logged in via ajax as ', req.body.uid);
-    res.send({error: false});
-});
-
-// conventional non-Ajax logout, so redirects
-app.post('/logout/', (req, res) => {
-    console.log('in logout');
-    req.session.uid = false;
-    req.session.logged_in = false;
-    res.redirect('/');
-});
-
-// two kinds of forms (GET and POST), both of which are pre-filled with data
-// from previous request, including a SELECT menu. Everything but radio buttons
-
-app.get('/form/', (req, res) => {
-    console.log('get form');
-    return res.render('form.ejs', {action: '/form/', data: req.query });
-});
-
-app.post('/form/', (req, res) => {
-    console.log('post form');
-    return res.render('form.ejs', {action: '/form/', data: req.body });
-});
-
-app.get('/staffList/', async (req, res) => {
-    const db = await Connection.open(mongoUri, WMDB);
-    let all = await db.collection(STAFF).find({}).toArray();
-    console.log('len', all.length, 'first', all[0]);
-    return res.render('list.ejs', {listDescription: 'all staff', list: all});
-});
 
 // ================================================================
 // postlude
