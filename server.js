@@ -76,8 +76,7 @@ app.get('/signUp', (req, res) => {
 
 // delete once user sessions are figured out
 app.get('/userForm', (req, res) => {
-    let currUser = req.session.username;
-    return res.render('userForm.ejs', {email: currUser});
+    return res.render('userForm.ejs', {email: req.session.username});
 })
 
 app.get('/search', async (req, res) => {
@@ -94,7 +93,7 @@ app.get('/search', async (req, res) => {
     console.log(results)
     let userUID = 1;
     let userName = 'Alexa Halim';
-    return res.render('postings.ejs', {list: results, userUID: userUID, userName: userName});
+    return res.render('postings.ejs', {list: results, userUID: req.session.uid, userName: req.session.name});
 })
 
 app.get('/postings', async (req, res) => {
@@ -129,19 +128,20 @@ app.get('/do-postings', async (req, res) => {
     else if (btnClicked == "remoteBtn"){
         showOpps = await db.collection(OPPS).find({location:{$regex: /remote/i }}).toArray();
     }
-
-    // let currentUser = await db.collection(USERS).find({}).toArray(); // must figure out how to find currentUser
     let userUID = 1;
     let userName = 'Alexa Halim';
-    // need user name and uid for navbar
-    return res.render('postings.ejs', {list: showOpps, userUID: userUID, userName: userName});
+    return res.render('postings.ejs', {list: showOpps, userUID: req.session.uid, userName: req.session.name});
 })
 
 app.get('/oppForm', (req, res) => {
-    let userUID = "1";
-    let userName = 'Alexa Halim';
-    // need user name and uid for navbar
-    return res.render('oppForm.ejs', {userUID: userUID, userName: userName});
+    if (req.session.logged_in) {
+        let userUID = "1";
+        let userName = 'Alexa Halim';
+        return res.render('oppForm.ejs', {userUID: req.session,uid, userName: req.session.name});
+    } else {
+        req.flash('error', `User must be logged in`);
+        return res.redirect('/login');
+    }
 })
 
 app.get('/post/:oid', async (req, res) => {
@@ -159,7 +159,7 @@ app.get('/post/:oid', async (req, res) => {
         // need user name and uid for navbar
         let userUID = 1;
         let userName = 'Alexa Halim';
-        return res.render('postPage.ejs', {post: opp[0], addedBy: addedBy[0], userUID: userUID, userName: userName}); // change to req.session.name and req.session.uid
+        return res.render('postPage.ejs', {post: opp[0], addedBy: addedBy[0], userUID: req.session.uid, userName: req.session.name}); // change to req.session.name and req.session.uid
     } else {
         req.flash('error', `User must be logged in`);
         return res.redirect('/login');
@@ -168,47 +168,51 @@ app.get('/post/:oid', async (req, res) => {
 
 app.get('/user/:uid', async (req, res) => {
     // need data from corresponding userProfile
+    if (!req.session.logged_in) {
+        req.flash('error', `User must be logged in`);
+        return res.redirect('/login');
+    }
     let currUserUID = req.params.uid;
-    const db = await Connection.open(mongoUri, EMPOWER);
-    let user = await db.collection(USERS).find({uid: currUserUID}).toArray(); //not finding anybody, are we sure the user database has been created?
-    console.log(user);
+    if (req.session.uid === currUserUID) {
+        const db = await Connection.open(mongoUri, EMPOWER);
+        let user = await db.collection(USERS).find({uid: currUserUID}).toArray(); //not finding anybody, are we sure the user database has been created?
+        console.log(user);
+        //setting up the checkbox pre-select values to render in the userProfile.ejs
+        let isCheckedArr = user[0].industry;
+        let isCheckedBio = false;
+        let isCheckedCloud = false;
+        let isCheckedCompVision = false;
+        let isCheckedDataScience = false;
+        let isCheckedGraphics = false;
+        let isCheckedHci = false;
+        let isCheckedML = false;
+        let isCheckedProdDesign = false;
+        let isCheckedProdMgmt = false;
+        let isCheckedSWE = false;
+        let isCheckedSystems = false;
+        let isCheckedUiUx = false;
+        let isCheckedOther = false;
 
-    //setting up the checkbox pre-select values to render in the userProfile.ejs
-    let isCheckedArr = user[0].industry;
-    let isCheckedBio = false;
-    let isCheckedCloud = false;
-    let isCheckedCompVision = false;
-    let isCheckedDataScience = false;
-    let isCheckedGraphics = false;
-    let isCheckedHci = false;
-    let isCheckedML = false;
-    let isCheckedProdDesign = false;
-    let isCheckedProdMgmt = false;
-    let isCheckedSWE = false;
-    let isCheckedSystems = false;
-    let isCheckedUiUx = false;
-    let isCheckedOther = false;
+        if (isCheckedArr.includes("bioinformatics")){isCheckedBio = true;};
+        if (isCheckedArr.includes("cloud")){isCheckedCloud = true;};
+        if (isCheckedArr.includes("compVision")){isCheckedCompVision = true;};
+        if (isCheckedArr.includes("dataScience")){isCheckedDataScience = true;};
+        if (isCheckedArr.includes("graphics")){isCheckedGraphics = true;};
+        if (isCheckedArr.includes("hci")){isCheckedHci = true;};
+        if (isCheckedArr.includes("ml")){isCheckedML = true;};
+        if (isCheckedArr.includes("prodDesign")){isCheckedProdDesign = true;};
+        if (isCheckedArr.includes("prodMgmt")){isCheckedProdMgmt = true;};
+        if (isCheckedArr.includes("software engineering")){isCheckedSWE = true;};
+        if (isCheckedArr.includes("systems")){isCheckedSystems = true;};
+        if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
+        if (isCheckedArr.includes("other")){isCheckedOther = true;};
 
-    if (isCheckedArr.includes("bioinformatics")){isCheckedBio = true;};
-    if (isCheckedArr.includes("cloud")){isCheckedCloud = true;};
-    if (isCheckedArr.includes("compVision")){isCheckedCompVision = true;};
-    if (isCheckedArr.includes("dataScience")){isCheckedDataScience = true;};
-    if (isCheckedArr.includes("graphics")){isCheckedGraphics = true;};
-    if (isCheckedArr.includes("hci")){isCheckedHci = true;};
-    if (isCheckedArr.includes("ml")){isCheckedML = true;};
-    if (isCheckedArr.includes("prodDesign")){isCheckedProdDesign = true;};
-    if (isCheckedArr.includes("prodMgmt")){isCheckedProdMgmt = true;};
-    if (isCheckedArr.includes("software engineering")){isCheckedSWE = true;};
-    if (isCheckedArr.includes("systems")){isCheckedSystems = true;};
-    if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
-    if (isCheckedArr.includes("other")){isCheckedOther = true;};
-
-    // need user name and uid for navbar
-    let userUID = "1";
-    let userName = 'Alexa Halim';
-    return res.render('userProfile.ejs', {user: user[0], 
-                                          userUID: userUID, 
-                                          userName: userName, 
+        // need user name and uid for navbar
+        let userUID = "1";
+        let userName = 'Alexa Halim';
+        return res.render('userProfile.ejs', {user: user[0], 
+                                          userUID: req.session.uid, 
+                                          userName: req.session.name, 
                                           statuses: ["Alumn", "Professor", "Staff", "Student", "Affiliate"],
                                           isCheckedBio: isCheckedBio,
                                           isCheckedCloud: isCheckedCloud,
@@ -223,18 +227,21 @@ app.get('/user/:uid', async (req, res) => {
                                           isCheckedSystems: isCheckedSystems,
                                           isCheckedUiUx: isCheckedUiUx,
                                           isCheckedOther: isCheckedOther});
+    } else {
+        req.flash('error', `You do not have permission to view this user`);
+        return res.redirect('/user/' + req.session.uid);
+    }
 });
 
 app.get('/updatePost/:oid', async (req, res) => {
     // need data from corresponding opportunity doc
     let postOID = parseInt(req.params.oid);
     const db = await Connection.open(mongoUri, EMPOWER);
-    let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
+    let opp = await db.collection(OPPS).find({oid: postOID}).toArray(); // need flash for if it's not a valid oid?
     let addedByUID = opp[0].addedBy.uid;
     console.log(addedByUID);
     let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
     console.log(addedBy);
-
     //setting up the drop-down pre-select values to render in the updateOpp.ejs
     let isSelectedStr = opp[0].type;
     let isSelectedConf = false;
@@ -289,8 +296,8 @@ app.get('/updatePost/:oid', async (req, res) => {
     let userName = 'Alexa Halim';
     return res.render('updateOpp.ejs', {opp: opp[0], 
                                         addedBy: addedBy[0], 
-                                        userUID: userUID, 
-                                        userName: userName,
+                                        userUID: req.session.uid, 
+                                        userName: req.session.name,
                                         isCheckedBio: isCheckedBio,
                                         isCheckedCloud: isCheckedCloud,
                                         isCheckedCompVision: isCheckedCompVision,
