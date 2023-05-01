@@ -59,7 +59,7 @@ const DB = process.env.USER;
 const EMPOWER = 'empower';
 const USERS = 'users';
 const OPPS = 'opps';
-
+const ROUNDS = 15;
 
 // main page. This shows the use of session cookies
 app.get('/', (req, res) => {
@@ -102,6 +102,7 @@ app.get('/postings', async (req, res) => {
         let allOpps = await db.collection(OPPS).find({}).toArray();
         let userUID = 1; // need to comment out later
         let userName = 'Alexa Halim';
+        console.log(req.session.uid, req.session.name);
         return res.render('postings.ejs', {list: allOpps, userUID: req.session.uid, userName: req.session.name});
     } else {
         req.flash('error', `User must be logged in`);
@@ -320,6 +321,14 @@ app.get('/updatePost/:oid', async (req, res) => {
                                         isSelectedOther: isSelectedOther});
 });
 
+// fixing ww9
+app.get('/fixww9', async (req, res) => {
+    const db = await Connection.open(mongoUri, EMPOWER);
+    let hash = await bcrypt.hash("pass", ROUNDS);
+    var existingUser = await db.collection(USERS).updateOne(
+        {email: "ww9@wellesley.edu"},
+        {$set: {password: hash}});
+})
 // shows how logins might work by setting a value in the session
 // This is a conventional, non-Ajax, login, so it redirects to main page 
 app.post('/login', async (req, res) => {
@@ -330,11 +339,14 @@ app.post('/login', async (req, res) => {
         var existingUser = await db.collection(USERS).findOne({email: username});
         if (!existingUser) {
             req.flash('error', `User with email ${username} does not exist, please try again.`);
+            console.log("User with email does not exist")
             return res.redirect('/login');
         }
-        const match = await bcrypt.compare(password, existingUser.hash);
+        console.log(password, existingUser.password)
+        const match = await bcrypt.compare(password, existingUser.password);
         if (!match) {
             req.flash('error', `Incorrect username or password. Please try again.`);
+            console.log("Incorrect username or password")
             return res.redirect('/login');
         }
         req.flash('info', `Logged in as ` + username);
@@ -345,6 +357,7 @@ app.post('/login', async (req, res) => {
         return res.redirect('/postings');
     }   catch (error) {
         req.flash('error', `Something went wrong: ${error}`);
+        console.log("Something went wrong")
         return res.redirect('/login');
     }
 });
@@ -355,10 +368,10 @@ app.post('/signUp', async (req, res) => {
     let users = await db.collection(USERS).find({email: email}).toArray();
     // ADDING PASSWORD FUNCTIONALITY
     let password = req.body.psw.toString();
-    let salt = bcrypt.genSaltSync();
+    //let salt = bcrypt.genSaltSync();
     //let numSaltRounds = 1;
     //console.log("new salt ", "\t", salt);
-    let hash = bcrypt.hash(password, salt);
+    let hash = await bcrypt.hash(password, ROUNDS);
     //console.log("signup/stored", "\t", salt);
     //res.redirect('/userForm/');
     if (users.length != 0) {
