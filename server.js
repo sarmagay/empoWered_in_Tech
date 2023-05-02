@@ -106,8 +106,6 @@ app.get('/search', async (req, res) => {
 
     let results = await db.collection(OPPS).find(findDict).toArray();
     console.log(results);
-    let userUID = 1;
-    let userName = 'Alexa Halim';
     return res.render('postings.ejs', {list: results, userUID: req.session.uid, userName: req.session.name});
 })
 
@@ -115,8 +113,6 @@ app.get('/postings', async (req, res) => {
     if (req.session.logged_in) {
         const db = await Connection.open(mongoUri, EMPOWER);
         let allOpps = await db.collection(OPPS).find({}).toArray();
-        let userUID = 1; // need to comment out later
-        let userName = 'Alexa Halim';
         console.log(req.session.uid, req.session.name);
         return res.render('postings.ejs', {list: allOpps, userUID: req.session.uid, userName: req.session.name});
     } else {
@@ -144,8 +140,6 @@ app.get('/do-postings', async (req, res) => {
     else if (btnClicked == "remoteBtn"){
         showOpps = await db.collection(OPPS).find({location:{$regex: /remote/i }}).toArray();
     }
-    let userUID = 1;
-    let userName = 'Alexa Halim';
     return res.render('postings.ejs', {list: showOpps, userUID: req.session.uid, userName: req.session.name});
 })
 
@@ -163,6 +157,7 @@ app.get('/oppForm', (req, res) => {
 app.get('/post/:oid', async (req, res) => {
     if (req.session.logged_in) {
         // need data from corresponding opportunity doc
+        console.log(req.params.oid);
         let postOID = parseInt(req.params.oid);
         console.log(postOID);
         const db = await Connection.open(mongoUri, EMPOWER);
@@ -172,9 +167,6 @@ app.get('/post/:oid', async (req, res) => {
         console.log(addedByUID);
         let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
         console.log(addedBy);
-        // need user name and uid for navbar
-        let userUID = 1;
-        let userName = 'Alexa Halim';
         return res.render('postPage.ejs', {post: opp[0], addedBy: addedBy[0], userUID: req.session.uid, userName: req.session.name}); // change to req.session.name and req.session.uid
     } else {
         req.flash('error', `User must be logged in`);
@@ -223,10 +215,6 @@ app.get('/user/:uid', async (req, res) => {
         if (isCheckedArr.includes("systems")){isCheckedSystems = true;};
         if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
         if (isCheckedArr.includes("other")){isCheckedOther = true;};
-
-        // need user name and uid for navbar
-        let userUID = "1";
-        let userName = 'Alexa Halim';
         return res.render('userProfile.ejs', {user: user[0], 
                                           userUID: req.session.uid, 
                                           userName: req.session.name, 
@@ -254,7 +242,11 @@ app.get('/updatePost/:oid', async (req, res) => {
     // need data from corresponding opportunity doc
     let postOID = parseInt(req.params.oid);
     const db = await Connection.open(mongoUri, EMPOWER);
-    let opp = await db.collection(OPPS).find({oid: postOID}).toArray(); // need flash for if it's not a valid oid?
+    let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
+    if (opp[0].addedBy.name != req.session.name) {
+        req.flash('error', `You do not have permission to edit this opp`);
+        return res.redirect('/post/' + postOID);
+    }
     let addedByUID = opp[0].addedBy.uid;
     console.log(addedByUID);
     let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
@@ -307,10 +299,6 @@ app.get('/updatePost/:oid', async (req, res) => {
     if (isCheckedArr.includes("systems")){isCheckedSystems = true;};
     if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
     if (isCheckedArr.includes("other")){isCheckedOther = true;};
-    //console.log(isCheckedSWE);
-    // need user name and uid for navbar
-    let userUID = "1";
-    let userName = 'Alexa Halim';
     return res.render('updateOpp.ejs', {opp: opp[0], 
                                         addedBy: addedBy[0], 
                                         userUID: req.session.uid, 
@@ -337,24 +325,6 @@ app.get('/updatePost/:oid', async (req, res) => {
                                         isSelectedOther: isSelectedOther});
 });
 
-// fixing ww9
-app.get('/fix', async (req, res) => {
-    const db = await Connection.open(mongoUri, EMPOWER);
-    let hash = await bcrypt.hash("shine", ROUNDS);
-    var existingUser = await db.collection(USERS).updateOne(
-        {email: "yy3@wellesley.edu"},
-        {$set: {password: hash}});
-})
-
-// need to delete
-app.post('/logout', async (req, res) => {
-    req.session.username = null;
-    req.session.uid = null;
-    req.session.name = null;
-    req.session.logged_in = false;
-    console.log(req.session.username, req.session.uid, req.session.name, req.session.logged_in);
-    return res.redirect('/');
-})
 // shows how logins might work by setting a value in the session
 // This is a conventional, non-Ajax, login, so it redirects to main page 
 app.post('/login', async (req, res) => {
@@ -395,12 +365,7 @@ app.post('/signUp', async (req, res) => {
     let users = await db.collection(USERS).find({email: email}).toArray();
     // ADDING PASSWORD FUNCTIONALITY
     let password = req.body.psw.toString();
-    //let salt = bcrypt.genSaltSync();
-    //let numSaltRounds = 1;
-    //console.log("new salt ", "\t", salt);
     let hash = await bcrypt.hash(password, ROUNDS);
-    //console.log("signup/stored", "\t", salt);
-    //res.redirect('/userForm/');
     if (users.length != 0) {
         req.flash('error', `User with email ${email} already in use! Please log in.`);
     }
@@ -427,14 +392,10 @@ app.post('/signUp', async (req, res) => {
 })
 
 app.post('/userForm', async (req, res) => {
-    // let user = req.session.username;
-    // if req.session.logged_in and flash redirect back to log in
-    // make sure necessary fields are filled
     try {
         console.log(req.body);
         let name = req.body.fullName;
         let uid = req.body.uid;
-        // let email = req.body.email;
         let status = req.body.userStatus;
         let industry = req.body.industry;
         let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
@@ -486,7 +447,8 @@ app.post('/oppForm', async (req, res) => {
 
     const db = await Connection.open(mongoUri, EMPOWER);
     const opps = await db.collection(OPPS);
-    let addedByName = await db.collection(USERS).find({uid: addedByUID}).toArray();
+    let addedByUser = await db.collection(USERS).find({uid: addedByUID}).toArray();
+    console.log(addedByUser)
     let inserted = await opps.updateOne(
         { oid: oid },
         { $setOnInsert: 
@@ -502,7 +464,7 @@ app.post('/oppForm', async (req, res) => {
                 expiration: expiration,
                 referralLink: refLink,
                 description: description,
-                addedBy: {uid: addedByUID, name: addedByName},
+                addedBy: {uid: addedByUID, name: addedByUser[0].name},
                 comments: null
             }
         },
@@ -575,8 +537,6 @@ app.post('/post/delete/:oid', async (req, res) => {
 app.post('/updatePost/:oid', async (req, res) => {
     let oid = parseInt(req.params.oid);
     // checking if user is author of post
-    let userUID = 1;
-    let userName = 'Alexa Halim';
     // need to write how to update the information with the edits
     console.log(req.body);
     let name = req.body.opportunityName;
@@ -665,8 +625,6 @@ app.post('/updatePost/:oid', async (req, res) => {
 
     res.render('updateOpp.ejs', {opp: updatedOpp[0], 
                                 addedBy: addedBy[0], 
-                                userUID: userUID, 
-                                userName: userName,
                                 isCheckedBio: isCheckedBio,
                                 isCheckedCloud: isCheckedCloud,
                                 isCheckedCompVision: isCheckedCompVision,
