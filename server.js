@@ -145,7 +145,7 @@ app.get('/oppForm', (req, res) => {
     if (req.session.logged_in) {
         let userUID = "1";
         let userName = 'Alexa Halim';
-        return res.render('oppForm.ejs', {userUID: req.session,uid, userName: req.session.name});
+        return res.render('oppForm.ejs', {userUID: req.session.uid, userName: req.session.name});
     } else {
         req.flash('error', `User must be logged in`);
         return res.redirect('/login');
@@ -183,7 +183,8 @@ app.get('/user/:uid', async (req, res) => {
     let currUserUID = req.params.uid;
     if (req.session.uid === currUserUID) {
         const db = await Connection.open(mongoUri, EMPOWER);
-        let user = await db.collection(USERS).find({uid: currUserUID}).toArray(); //not finding anybody, are we sure the user database has been created?
+        console.log(req.session.uid);
+        let user = await db.collection(USERS).find({uid: req.session.uid}).toArray(); //not finding anybody, are we sure the user database has been created?
         console.log(user);
         //setting up the checkbox pre-select values to render in the userProfile.ejs
         let isCheckedArr = user[0].industry;
@@ -210,7 +211,7 @@ app.get('/user/:uid', async (req, res) => {
         if (isCheckedArr.includes("ml")){isCheckedML = true;};
         if (isCheckedArr.includes("prodDesign")){isCheckedProdDesign = true;};
         if (isCheckedArr.includes("prodMgmt")){isCheckedProdMgmt = true;};
-        if (isCheckedArr.includes("software engineering")){isCheckedSWE = true;};
+        if (isCheckedArr.includes("swe")){isCheckedSWE = true;};
         if (isCheckedArr.includes("systems")){isCheckedSystems = true;};
         if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
         if (isCheckedArr.includes("other")){isCheckedOther = true;};
@@ -329,7 +330,7 @@ app.get('/updatePost/:oid', async (req, res) => {
 });
 
 // fixing ww9
-app.get('/fixyy3', async (req, res) => {
+app.get('/fix', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
     let hash = await bcrypt.hash("shine", ROUNDS);
     var existingUser = await db.collection(USERS).updateOne(
@@ -338,7 +339,7 @@ app.get('/fixyy3', async (req, res) => {
 })
 
 // need to delete
-app.get('/logout', async (req, res) => {
+app.post('/logout', async (req, res) => {
     req.session.username = null;
     req.session.uid = null;
     req.session.name = null;
@@ -359,8 +360,9 @@ app.post('/login', async (req, res) => {
             console.log("User with email does not exist")
             return res.redirect('/login');
         }
-        console.log(password, existingUser.password)
+        console.log(password, existingUser.password);
         const match = await bcrypt.compare(password, existingUser.password);
+        console.log(match);
         if (!match) {
             req.flash('error', `Incorrect username or password. Please try again.`);
             console.log("Incorrect username or password")
@@ -433,7 +435,7 @@ app.post('/userForm', async (req, res) => {
         const db = await Connection.open(mongoUri, EMPOWER);
         const inserted = await db.collection(USERS).updateOne(
             {email: req.session.username},
-            { $setOnInsert:
+            { $set:
                 {
                     uid: uid,
                     name: name,
