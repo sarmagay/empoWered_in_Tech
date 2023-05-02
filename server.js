@@ -336,6 +336,16 @@ app.get('/fixyy3', async (req, res) => {
         {email: "yy3@wellesley.edu"},
         {$set: {password: hash}});
 })
+
+// need to delete
+app.get('/logout', async (req, res) => {
+    req.session.username = null;
+    req.session.uid = null;
+    req.session.name = null;
+    req.session.logged_in = false;
+    console.log(req.session.username, req.session.uid, req.session.name, req.session.logged_in);
+    return res.redirect('/');
+})
 // shows how logins might work by setting a value in the session
 // This is a conventional, non-Ajax, login, so it redirects to main page 
 app.post('/login', async (req, res) => {
