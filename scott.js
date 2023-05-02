@@ -22,7 +22,6 @@ const bcrypt = require('bcrypt');
 const { Connection } = require('./connection'); // Olivia's module
 const cs304 = require('./cs304');
 const { slice } = require('lodash');
-const { find } = require('async');
 
 // Create and configure the app
 
@@ -92,20 +91,16 @@ app.get('/search', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
     let term = req.query.term;
     let category = req.query.category;
-    // console.log("submitted= name: " + term + ", type: " + category);
+    console.log("submitted name: " + term + ", type: " + category);
     let findDict = {};
-    findDict[category] = (new RegExp(term, "i"));
-    
-    console.log(category); //      name
-    console.log(new RegExp(term, "i")); //    /reuse/i
-    console.log(term); //   reuse
-    console.log(findDict[category] == /reuse/i); //  true
-
-    console.log(findDict[category]); //  /reuse/i
-    console.log(findDict); //   { name: /reuse/i }
-
-    let results = await db.collection(OPPS).find({findDict}).toArray();
-    console.log(results);
+    findDict[category] = new RegExp(term, "i");
+    console.log(new RegExp(term, "i"));
+    console.log(findDict[category] == /REUSE/i);
+    console.log(findDict);
+    let all = await db.collection(OPPS).find({}).toArray();
+    console.log('all.length', all.length);
+    let results = await db.collection(OPPS).find({name: /REUSE/i}).toArray();
+    console.log(results)
     let userUID = 1;
     let userName = 'Alexa Halim';
     return res.render('postings.ejs', {list: results, userUID: userUID, userName: userName});
