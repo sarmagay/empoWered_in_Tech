@@ -68,10 +68,18 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
+    if (req.session.logged_in) {
+        req.flash(`error`, 'You are already logged in.');
+        return res.redirect('/user/' + req.session.uid);
+    }
     return res.render('login.ejs');
 });
 
 app.get('/signUp', (req, res) => {
+    if (req.session.logged_in) {
+        req.flash(`error`, 'You are already logged in.');
+        return res.redirect('/user/' + req.sessionOptions.uid);
+    }
     return res.render('signUp.ejs', {action: '/userForm/', data: req.query});
 })
 
