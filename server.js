@@ -525,6 +525,15 @@ app.post('/user/delete/:uid', async (req, res) => {
     return res.redirect("/");
 })
 
+app.post('/logout', (req, res) => {
+    req.session.uid = null;
+    req.session.name = null;
+    req.session.logged_in = false;
+    req.session.username = null;
+    req.flash(`info`, `Successfully logged oout.`);
+    return res.redirect("/login");
+})
+
 app.post('/post/delete/:oid', async (req, res) => {
     const oppID = req.params.oid;
     const db = await Connection.open(mongoUri, EMPOWER);
