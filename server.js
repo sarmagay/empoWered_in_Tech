@@ -96,7 +96,7 @@ app.get('/search', async (req, res) => {
     console.log(findDict[category]); // /reuse/i
     console.log(findDict); // { name: /reuse/i }
 
-    let results = await db.collection(OPPS).find({findDict}).toArray();
+    let results = await db.collection(OPPS).find(findDict).toArray();
     console.log(results);
     let userUID = 1;
     let userName = 'Alexa Halim';
