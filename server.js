@@ -329,11 +329,11 @@ app.get('/updatePost/:oid', async (req, res) => {
 });
 
 // fixing ww9
-app.get('/fixww9', async (req, res) => {
+app.get('/fixyy3', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
-    let hash = await bcrypt.hash("pass", ROUNDS);
+    let hash = await bcrypt.hash("shine", ROUNDS);
     var existingUser = await db.collection(USERS).updateOne(
-        {email: "ww9@wellesley.edu"},
+        {email: "yy3@wellesley.edu"},
         {$set: {password: hash}});
 })
 // shows how logins might work by setting a value in the session
@@ -400,6 +400,7 @@ app.post('/signUp', async (req, res) => {
             {upsert: true}
         )
         console.log(newUser);
+        req.session.username = email;
         return res.render('userForm.ejs', {email: email}); 
     }
  
@@ -421,7 +422,7 @@ app.post('/userForm', async (req, res) => {
         let minors = req.body.minors;
         const db = await Connection.open(mongoUri, EMPOWER);
         const inserted = await db.collection(USERS).updateOne(
-            {uid: uid},
+            {email: req.session.username},
             { $setOnInsert:
                 {
                     uid: uid,
@@ -438,7 +439,6 @@ app.post('/userForm', async (req, res) => {
             { upsert: true }
         )
         console.log(inserted);
-        req.session.username = username;
         req.session.logged_in = true;
         req.session.uid = uid;
         req.session.name = name;
