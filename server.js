@@ -88,13 +88,13 @@ app.get('/search', async (req, res) => {
     let findDict = {};
     findDict[category] = (new RegExp(term, "i"));
     
-    console.log(category); //      name
-    console.log(new RegExp(term, "i")); //    /reuse/i
-    console.log(term); //   reuse
-    console.log(findDict[category] == /reuse/i); //  true
+    console.log(category); // name
+    console.log(new RegExp(term, "i")); // /reuse/i
+    console.log(term); // reuse
+    console.log(findDict[category] == /reuse/i); // true
 
-    console.log(findDict[category]); //  /reuse/i
-    console.log(findDict); //   { name: /reuse/i }
+    console.log(findDict[category]); // /reuse/i
+    console.log(findDict); // { name: /reuse/i }
 
     let results = await db.collection(OPPS).find({findDict}).toArray();
     console.log(results);
