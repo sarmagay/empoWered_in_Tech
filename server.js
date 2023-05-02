@@ -295,7 +295,7 @@ app.get('/updatePost/:oid', async (req, res) => {
     if (isCheckedArr.includes("ml")){isCheckedML = true;};
     if (isCheckedArr.includes("prodDesign")){isCheckedProdDesign = true;};
     if (isCheckedArr.includes("prodMgmt")){isCheckedProdMgmt = true;};
-    if (isCheckedArr.includes("software engineering")){isCheckedSWE = true;};
+    if (isCheckedArr.includes("swe")){isCheckedSWE = true;};
     if (isCheckedArr.includes("systems")){isCheckedSystems = true;};
     if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
     if (isCheckedArr.includes("other")){isCheckedOther = true;};
@@ -632,7 +632,9 @@ app.post('/updatePost/:oid', async (req, res) => {
     if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
     if (isCheckedArr.includes("other")){isCheckedOther = true;};
 
-    res.render('updateOpp.ejs', {opp: updatedOpp[0], 
+    res.render('updateOpp.ejs', {userUID: req.session.uid,
+                                userName: req.session.name,
+                                opp: updatedOpp[0], 
                                 addedBy: addedBy[0], 
                                 isCheckedBio: isCheckedBio,
                                 isCheckedCloud: isCheckedCloud,
