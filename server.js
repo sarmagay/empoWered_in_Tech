@@ -145,8 +145,6 @@ app.get('/do-postings', async (req, res) => {
 
 app.get('/oppForm', (req, res) => {
     if (req.session.logged_in) {
-        let userUID = "1";
-        let userName = 'Alexa Halim';
         return res.render('oppForm.ejs', {userUID: req.session.uid, userName: req.session.name});
     } else {
         req.flash('error', `User must be logged in`);
@@ -160,6 +158,7 @@ app.get('/post/:oid', async (req, res) => {
         console.log(req.params.oid);
         let postOID = parseInt(req.params.oid);
         console.log(postOID);
+        req.session.postOID = postOID;
         const db = await Connection.open(mongoUri, EMPOWER);
         let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
         console.log(opp);
@@ -482,6 +481,32 @@ app.post('/oppForm', async (req, res) => {
     }
 })
 
+app.post('/commentForm', async (req, res) => {
+    let comment = req.body.description;
+    const db = await Connection.open(mongoUri, EMPOWER);
+    let currPost = await db.collection(OPPS).find({oid: parseInt(req.session.postOID)}).toArray();
+    if (currPost[0].comments == null) {
+        let edited = await db.collection(OPPS).updateOne(
+            {oid: currPost[0].oid},
+            { $set:
+                {
+                    comments: [{author: req.session.name, content: comment}],
+                }
+            });
+        console.log(edited);
+    } else {
+        let edited = await db.collection(OPPS).updateOne(
+            {oid: currPost[0].oid},
+            { $push:
+                {
+                    comments: {author: req.session.name, content: comment},
+                }
+            });
+        console.log(edited);
+    }
+    return res.redirect('/post/' + currPost[0].oid);
+})
+
 app.post('/user/:uid', async (req, res) => {
     let uid = req.params.uid;
     console.log(req.body);
@@ -493,7 +518,7 @@ app.post('/user/:uid', async (req, res) => {
     let majors = req.body.majors.split(", ")
     let minors = req.body.minors;
     const db = await Connection.open(mongoUri, EMPOWER);
-    const edited = await db.collection(USERS).updateOne(
+    let edited = await db.collection(USERS).updateOne(
         {uid: uid},
         { $set:
             {
@@ -561,7 +586,7 @@ app.post('/updatePost/:oid', async (req, res) => {
     let description = req.body.description;
 
     const db = await Connection.open(mongoUri, EMPOWER);
-    const edited = await db.collection(OPPS).updateOne(
+    let edited = await db.collection(OPPS).updateOne(
         {oid: oid},
         { $set:
             {

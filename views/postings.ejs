@@ -47,7 +47,7 @@
                         <p> <%= elt.location %> </p>
 
                         <% if (elt.comments != null) { %>
-                            <% elt.comments.forEach((comment) => {%> 
+                            <% elt.comments.slice(0, 3).forEach((comment) => {%> 
                                 <div class="comment"><%= comment.author %>: <%= comment.content %></div>
                             <% }); %>
                         <% }; %>
