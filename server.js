@@ -542,13 +542,32 @@ app.post('/user/delete/:uid', async (req, res) => {
     req.session.name = null;
     req.session.logged_in = false;
     req.session.username = null;
-    const userUID = req.params.uid;
     const db = await Connection.open(mongoUri, EMPOWER);
+    const userUID = parseInt(req.params.uid);
     const deletion = await db.collection(USERS).deleteOne({uid: userUID});
-    console.log(deletion.acknowledged);
-    req.flash(`info`, `User (${userUID}) was deleted successfully.`);
-    return res.redirect("/");
+    if (deletion.deletedCount == 1) {
+        console.log(deletion.acknowledged);
+        req.flash(`info`, `User ${userUID} was deleted successfully.`);
+        return res.redirect("/");
+    }
+    else {
+        req.flash('error', `Error deleting user with ${userUID}`)
+    }
 })
+
+app.post('/post/delete/:oid', async (req, res) => {
+    const db = await Connection.open(mongoUri, EMPOWER);
+    const oppID = parseInt(req.params.oid);
+    const deletion = await db.collection(OPPS).deleteOne({oid: oppID});
+    if (deletion.deletedCount == 1) {
+        console.log(deletion.acknowledged);
+        req.flash(`info`, `Opportunity ${oppID} was deleted.`);
+        return res.redirect("/postings");
+    }
+    else {
+        req.flash('error', `Error deleting opportunity with ${oppID}`)
+    }
+});
 
 app.post('/logout', (req, res) => {
     req.session.uid = null;
@@ -559,14 +578,6 @@ app.post('/logout', (req, res) => {
     return res.redirect("/login");
 })
 
-app.post('/post/delete/:oid', async (req, res) => {
-    const oppID = req.params.oid;
-    const db = await Connection.open(mongoUri, EMPOWER);
-    const deletion = await db.collection(OPPS).deleteOne({oid: oppID});
-    console.log(deletion.acknowledged);
-    // req.flash(`info`, `Opportunity (${oppID}) was deleted successfully.`);
-    return res.redirect("/postings");
-});
 
 app.post('/updatePost/:oid', async (req, res) => {
     let oid = parseInt(req.params.oid);
