@@ -162,11 +162,16 @@ app.get('/post/:oid', async (req, res) => {
         const db = await Connection.open(mongoUri, EMPOWER);
         let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
         console.log(opp);
-        let addedByUID = opp[0].addedBy.uid;
-        console.log(addedByUID);
-        let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
-        console.log(addedBy);
-        return res.render('postPage.ejs', {post: opp[0], addedBy: addedBy[0], userUID: req.session.uid, userName: req.session.name}); // change to req.session.name and req.session.uid
+        //let addedByUID = opp[0].addedBy.uid;
+        let addedByName = opp[0].addedBy.name;
+        console.log(addedByName);
+        //console.log(addedByUID);
+        //let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
+        //console.log(addedBy);
+        return res.render('postPage.ejs', {post: opp[0], 
+                                           addedByName: addedByName, 
+                                           userUID: req.session.uid, 
+                                           userName: req.session.name});
     } else {
         req.flash('error', `User must be logged in`);
         return res.redirect('/login');
@@ -183,7 +188,7 @@ app.get('/user/:uid', async (req, res) => {
     if (req.session.uid === currUserUID) {
         const db = await Connection.open(mongoUri, EMPOWER);
         console.log(req.session.uid);
-        let user = await db.collection(USERS).find({uid: req.session.uid}).toArray(); //not finding anybody, are we sure the user database has been created?
+        let user = await db.collection(USERS).find({uid: req.session.uid}).toArray();
         console.log(user);
         //setting up the checkbox pre-select values to render in the userProfile.ejs
         let isCheckedArr = user[0].industry;
