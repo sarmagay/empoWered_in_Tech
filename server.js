@@ -370,11 +370,19 @@ app.post('/signUp', async (req, res) => {
     // ADDING PASSWORD FUNCTIONALITY
     let password = req.body.psw.toString();
     let hash = await bcrypt.hash(password, ROUNDS);
-    if (users.length != 0) {
+    console.log(users);
+    if (users.length != 0){
+        //console.log("found null");
         req.flash('error', `User with email ${email} already in use! Please log in.`);
+        //console.log("passed flash");
+        return res.redirect('/login');
     }
     else if (email.slice(-14) != '@wellesley.edu') {
         req.flash('error', `Error: Email must be a "@wellesley.edu" email!`);
+        return res.render('signUp.ejs');
+    }
+    else if (req.body.psw != req.body.psw2) {
+        req.flash('error', `Please make sure passwords are matching!`);
         return res.render('signUp.ejs');
     }
     else {
@@ -403,6 +411,9 @@ app.post('/userForm', async (req, res) => {
         let status = req.body.userStatus;
         let industry = req.body.industry;
         let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
+        if (isNaN(year)){
+            year = "N/A";
+        }
         let majors = req.body.majors.split(", ")
         let minors = req.body.minors;
         const db = await Connection.open(mongoUri, EMPOWER);
@@ -520,6 +531,9 @@ app.post('/user/:uid', async (req, res) => {
     let status = req.body.userStatus;
     let industry = req.body.industry;
     let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
+    if (isNaN(year)){
+        year = "N/A";
+    }
     let majors = req.body.majors.split(", ")
     let minors = req.body.minors;
     const db = await Connection.open(mongoUri, EMPOWER);
