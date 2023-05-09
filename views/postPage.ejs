@@ -11,42 +11,46 @@
 <body>
     <%- include("partials/navbar.ejs") %>
     <%- include("partials/flashes.ejs") %>
-    <h1><%= post.name %></h1>
-    
-    <p><%= post.type %></p>
-    <p><%= post.org %></p>
-    <p><%= post.subfield %></p>
-    <p><%= post.link %></p>
 
-    <p>This post expires on: <% if (post.expiration != null) { %>
-        <p><%=post.expiration%></p>
-        <% } else { %>
-            Never
-        <% } %></p>
+    <div id="opportunityForm">
+        <h1><%= post.name %></h1>
+        
+        <p><%= post.type %></p>
+        <p><%= post.org %></p>
+        <p><%= post.subfield %></p>
+        <p><%= post.link %></p>
 
-    <p> Referral Link: <% if (post.referralLink != null) { %>
-        <a href="<%= post.referralLink %>"> </a>
-        <% } else { %>
-            N/A
-        <% } %></p>
+        <p>This post expires on: <% if (post.expiration != null) { %>
+            <p><%=post.expiration%></p>
+            <% } else { %>
+                Never
+            <% } %></p>
 
-    <p>Description: <% if (post.description != null) { %>
-        <p><%=post.description%></p>
-        <% } %></p></p>
+        <p> Referral Link: <% if (post.referralLink != null) { %>
+            <a href="<%= post.referralLink %>"> </a>
+            <% } else { %>
+                N/A
+            <% } %></p>
 
-    <p>Added by <%=addedBy.name%>, <%= addedBy.email %></p>
+        <p>Description: <% if (post.description != null) { %>
+            <p><%=post.description%></p>
+            <% } %></p></p>
 
-    <p>Comments: <% if (post.comments != null) { %>
-        <ul><% post.comments.forEach ((elt) => { %>
-            <li> <%= elt.author %>: <%= elt.content %></li>
-        <% });}; %>
-        </ul>
+        <p>Added by <%=addedBy.name%>, <%= addedBy.email %></p>
 
-    <%- include("partials/commentForm.ejs") %>
+        <p>Comments: <% if (post.comments != null) { %></p>
+            <ul><% post.comments.forEach ((elt) => { %>
+                <li><b> <%= elt.author %>:</b> <%= elt.content %></li>
+            <% });}; %>
+            </ul>
 
-    <% if (addedBy.name == userName) { %>
-        <a href="/updatePost/<%= post.oid %>" class='button'> Edit this post</a>
-    <% } %>
+        <%- include("partials/commentForm.ejs") %>
+
+        <% if (addedBy.name == userName) { %>
+            <a href="/updatePost/<%= post.oid %>" class='button'> Edit this post</a>
+        <% } %>
+
+    </div>
     
     <!-- load local js -->
     <script src="/main.js"></script>

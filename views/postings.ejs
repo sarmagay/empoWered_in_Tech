@@ -48,7 +48,7 @@
 
                         <% if (elt.comments != null) { %>
                             <% elt.comments.slice(0, 3).forEach((comment) => {%> 
-                                <div class="comment"><%= comment.author %>: <%= comment.content %></div>
+                                <div class="comment"><b><%= comment.author %>:</b> <%= comment.content %></div>
                             <% }); %>
                         <% }; %>
                     </div>    

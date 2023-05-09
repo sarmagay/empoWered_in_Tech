@@ -574,7 +574,7 @@ app.post('/logout', (req, res) => {
     req.session.name = null;
     req.session.logged_in = false;
     req.session.username = null;
-    req.flash(`info`, `Successfully logged oout.`);
+    req.flash(`info`, `Successfully logged out.`);
     return res.redirect("/login");
 })
 

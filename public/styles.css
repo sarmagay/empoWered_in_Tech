@@ -22,12 +22,22 @@ h1 {
 }
 
 .comment {
-  background-color: white;
   margin-bottom: 10px;
   width: 75%;
   padding: 20px;
   border-radius: 25px;
   border: 2px gray;
+  background-color: white;
+}
+
+.button {
+  background-color: #a84caf;
+  color: white;
+  padding: 2px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
 }
 
 #feedBox:hover {
@@ -50,6 +60,16 @@ h1 {
 
 .navBarText {
   color: antiquewhite;
+}
+
+.errors {
+  color:rgb(231, 78, 116);
+  font-style: italic;
+}
+
+.info {
+  color: lightcoral;
+  font-style: italic;
 }
 
 #opportunityForm {
