@@ -411,9 +411,6 @@ app.post('/userForm', async (req, res) => {
         let status = req.body.userStatus;
         let industry = req.body.industry;
         let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
-        if (isNaN(year)){
-            year = "N/A";
-        }
         let majors = req.body.majors.split(", ")
         let minors = req.body.minors;
         const db = await Connection.open(mongoUri, EMPOWER);
@@ -531,9 +528,6 @@ app.post('/user/:uid', async (req, res) => {
     let status = req.body.userStatus;
     let industry = req.body.industry;
     let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
-    if (isNaN(year)){
-        year = "N/A";
-    }
     let majors = req.body.majors.split(", ")
     let minors = req.body.minors;
     const db = await Connection.open(mongoUri, EMPOWER);
@@ -557,17 +551,21 @@ app.post('/user/:uid', async (req, res) => {
 })
 
 app.post('/user/delete/:uid', async (req, res) => {
+    console.log("beginning of delete func");
     req.session.uid = null;
     req.session.name = null;
     req.session.logged_in = false;
     req.session.username = null;
     const db = await Connection.open(mongoUri, EMPOWER);
-    const userUID = parseInt(req.params.uid);
+    const userUID = req.params.uid;
+    console.log("right before deletion, userUID: ", userUID);
     const deletion = await db.collection(USERS).deleteOne({uid: userUID});
+    console.log("deleted count: ", deletion.deletedCount);
     if (deletion.deletedCount == 1) {
         console.log(deletion.acknowledged);
+        console.log(" saw delete! ");
         req.flash(`info`, `User ${userUID} was deleted successfully.`);
-        return res.redirect("/");
+        return res.redirect("/login");
     }
     else {
         req.flash('error', `Error deleting user with ${userUID}`)

@@ -118,10 +118,11 @@
 
         <p><label>If "Other", please specify: <input type=text name="otherInterest"></label></p>
         
-        <% if (user.classYear != NaN) { %>
-            <p><label>Class Year (optional): <input type=text name="classYear" value="<%= user.classYear %>"></label></p>
-        <% } else { %>
+        <% if (isNaN(user.classYear)) { %>
+            <!-- <% console.log("it is Nan!!") %> --> 
             <p><label>Class Year (optional): <input type=text name="classYear" value=""></label></p>
+        <% } else { %>
+            <p><label>Class Year (optional): <input type=text name="classYear" value="<%= user.classYear %>"></label></p>
         <% } %>
 
         <p><label>Major(s) (optional): <input type=text name="majors" value="<%= user.major %>"></label></p>
