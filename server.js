@@ -445,6 +445,10 @@ app.post('/userForm', async (req, res) => {
 })
 
 app.post('/oppForm', async (req, res) => {
+    if (!req.session.logged_in) {
+        req.flash('error', `User must be logged in`);
+        return res.redirect('/login');
+    }
     console.log(req.body);
     let name = req.body.opportunityName;
     let location = req.body.location;
@@ -502,6 +506,10 @@ app.post('/oppForm', async (req, res) => {
 })
 
 app.post('/commentForm', async (req, res) => {
+    if (!req.session.logged_in) {
+        req.flash('error', `User must be logged in`);
+        return res.redirect('/login');
+    }
     let comment = req.body.description;
     const db = await Connection.open(mongoUri, EMPOWER);
     let currPost = await db.collection(OPPS).find({oid: parseInt(req.session.postOID)}).toArray();
@@ -528,9 +536,15 @@ app.post('/commentForm', async (req, res) => {
 })
 
 app.post('/user/:uid', async (req, res) => {
-    // checking that user is logged in and use value of uid from session
-    // if uid endpoint and uid session, flash warning (you're not allowed to modify)
+    if (!req.session.logged_in) {
+        req.flash('error', `User must be logged in`);
+        return res.redirect('/login');
+    }
     let uid = req.params.uid;
+    if (uid != req.session.uid) {
+        req.flash('error', `You currently do not have permission to modify this user profile. Please log out of this account and log in to that user.`);
+        return res.redirect('/user/' + req.session.uid);
+    }
     console.log(req.body);
     let name = req.body.fullName;
     let email = req.body.email;
@@ -560,6 +574,14 @@ app.post('/user/:uid', async (req, res) => {
 })
 
 app.post('/user/delete/:uid', async (req, res) => {
+    if (!req.session.logged_in) {
+        req.flash('error', `User must be logged in`);
+        return res.redirect('/login');
+    }
+    if (req.params.uid != req.session.uid) {
+        req.flash('error', `You do not have permission to modify this user. Please log out and log into this user`);
+        return res.redirect('/user/' + req.session.uid);
+    }
     console.log("beginning of delete func");
     req.session.uid = null;
     req.session.name = null;
@@ -582,7 +604,17 @@ app.post('/user/delete/:uid', async (req, res) => {
 })
 
 app.post('/post/delete/:oid', async (req, res) => {
+    if (!req.session.logged_in) {
+        req.flash('error', `User must be logged in`);
+        return res.redirect('/login');
+    }
     const db = await Connection.open(mongoUri, EMPOWER);
+    let currPost = db.collection(OPPS).find({oid: oid}).toArray();
+    let postAuthorUID = currPost[0].addedBy.uid;
+    if (req.session.uid != postAuthorUID) {
+        req.flash('error', `You do not have permission to modify this post. Please log out and log in as this post's author.`);
+        return res.redirect('/user/' + req.session.uid);
+    }
     const oppID = parseInt(req.params.oid);
     const deletion = await db.collection(OPPS).deleteOne({oid: oppID});
     if (deletion.deletedCount == 1) {
@@ -606,7 +638,18 @@ app.post('/logout', (req, res) => {
 
 
 app.post('/updatePost/:oid', async (req, res) => {
+    if (!req.session.logged_in) {
+        req.flash('error', `User must be logged in`);
+        return res.redirect('/login');
+    }
     let oid = parseInt(req.params.oid);
+    const db = await Connection.open(mongoUri, EMPOWER);
+    let currPost = db.collection(OPPS).find({oid: oid}).toArray();
+    let postAuthorUID = currPost[0].addedBy.uid;
+    if (req.session.uid != postAuthorUID) {
+        req.flash('error', `You do not have permission to modify this post. Please log out and log in as this post's author.`);
+        return res.redirect('/user/' + req.session.uid);
+    }
     // checking if user is author of post
     // need to write how to update the information with the edits
     console.log(req.body);
@@ -622,7 +665,6 @@ app.post('/updatePost/:oid', async (req, res) => {
     let expiration = req.body.due;
     let description = req.body.description;
 
-    const db = await Connection.open(mongoUri, EMPOWER);
     let edited = await db.collection(OPPS).updateOne(
         {oid: oid},
         { $set:
