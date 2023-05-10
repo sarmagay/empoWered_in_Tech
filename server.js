@@ -152,6 +152,8 @@ app.get('/oppForm', (req, res) => {
     }
 })
 
+
+
 app.get('/post/:oid', async (req, res) => {
     if (req.session.logged_in) {
         // need data from corresponding opportunity doc
@@ -445,7 +447,6 @@ app.post('/userForm', async (req, res) => {
 app.post('/oppForm', async (req, res) => {
     console.log(req.body);
     let name = req.body.opportunityName;
-    let oid = parseInt(req.body.oid); // how to do if oid is not an integer, how to flash
     let location = req.body.location;
     let type = req.body.oppType;
     let org = req.body.org;
@@ -455,12 +456,18 @@ app.post('/oppForm', async (req, res) => {
     let expiration = req.body.due; //
     let refLink = req.body.referralLink; // is this the right name?
     let description = req.body.description; //
-    let addedByUID = req.body.addedBy;
-
+    let addedByUID = req.session.uid;
+    console.log('addedby uid: ', addedByUID);
     const db = await Connection.open(mongoUri, EMPOWER);
     const opps = await db.collection(OPPS);
     let addedByUser = await db.collection(USERS).find({uid: addedByUID}).toArray();
     console.log(addedByUser)
+    // increment the counter document
+    let result = await opps.findOneAndUpdate({counter: {$exists: true}},
+                                             {$inc: {counter: 1}}, 
+                                             {returnDocument: "after"});
+    let oid = result.value.counter;
+    console.log('new oid: ', oid);
     let inserted = await opps.updateOne(
         { oid: oid },
         { $setOnInsert: 
