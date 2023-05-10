@@ -528,6 +528,8 @@ app.post('/commentForm', async (req, res) => {
 })
 
 app.post('/user/:uid', async (req, res) => {
+    // checking that user is logged in and use value of uid from session
+    // if uid endpoint and uid session, flash warning (you're not allowed to modify)
     let uid = req.params.uid;
     console.log(req.body);
     let name = req.body.fullName;

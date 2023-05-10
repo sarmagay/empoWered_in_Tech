@@ -18,7 +18,7 @@
         <p><%= post.type %></p>
         <p><%= post.org %></p>
         <p><%= post.subfield %></p>
-        <p><%= post.link %></p>
+        <p><a class='hyperlink' href="<%= post.link %>"><%= post.link %></a></p>
 
         <p>This post expires on: <% if (post.expiration != null) { %>
             <p><%=post.expiration%></p>
@@ -27,7 +27,7 @@
             <% } %></p>
 
         <p> Referral Link: <% if (post.referralLink != null) { %>
-            <a href="<%= post.referralLink %>"> </a>
+            <a class='hyperlink' href="<%= post.referralLink %>"><%= post.referralLink %></a>
             <% } else { %>
                 N/A
             <% } %></p>
