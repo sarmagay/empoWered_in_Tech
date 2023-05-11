@@ -105,7 +105,11 @@ app.get('/postings', async (req, res) => {
         const db = await Connection.open(mongoUri, EMPOWER);
         let allOpps = await db.collection(OPPS).find({oid: {$exists: true}}).toArray();
         console.log(req.session.uid, req.session.name);
-        return res.render('postings.ejs', {list: allOpps, userUID: req.session.uid, userName: req.session.name});
+        return res.render('postings.ejs', {
+            list: allOpps, 
+            userUID: req.session.uid,
+            userName: req.session.name
+        });
     } else {
         req.flash('error', `User must be logged in`);
         return res.redirect('/login');
@@ -116,22 +120,32 @@ app.get('/do-postings', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
     let showOpps = await db.collection(OPPS).find({}).toArray();
     let btnClicked = req.query.button;
+    // filters postings by what filter button user selects
+    // shows all postings
     if (btnClicked == "allOpBtn"){
         showOpps = await db.collection(OPPS).find({}).toArray();
     }
+    // shows internships
     else if (btnClicked == "internshipBtn"){
         showOpps = await db.collection(OPPS).find({type:{$regex: /internship/i }}).toArray();
     }
+    // shows jobs
     else if (btnClicked == "jobBtn"){
         showOpps = await db.collection(OPPS).find({type:{$regex: /job/i }}).toArray();
     }
+    // shows research
     else if (btnClicked == "researchBtn"){
         showOpps = await db.collection(OPPS).find({type:{$regex: /research/i }}).toArray();
     }
+    // shows remote
     else if (btnClicked == "remoteBtn"){
         showOpps = await db.collection(OPPS).find({location:{$regex: /remote/i }}).toArray();
     }
-    return res.render('postings.ejs', {list: showOpps, userUID: req.session.uid, userName: req.session.name});
+    return res.render('postings.ejs', {
+        list: showOpps, 
+        userUID: req.session.uid, 
+        userName: req.session.name
+    });
 })
 
 app.get('/oppForm', (req, res) => {
@@ -566,7 +580,7 @@ app.post('/user/:uid', async (req, res) => {
         });
     console.log(edited);
     let updatedUser = await db.collection(USERS).find({uid: uid}).toArray();
-    console.log(updatedUser[0]); // shows up as undefined
+    console.log(updatedUser[0]);
     res.redirect('/user/' + uid); // goes to correct link tho
 })
 
