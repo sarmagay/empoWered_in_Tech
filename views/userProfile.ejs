@@ -117,7 +117,7 @@
                 </ul>
         </div>
 
-        <p><label>If "Other", please specify: <input type=text name="otherInterest"></label></p>
+        <p><label>If "Other", please specify: <input type=text name="otherInterest" value="<%= user.industry[0] %>"></label></p>
         
         <% if (isNaN(user.classYear)) { %>
             <!-- <% console.log("it is Nan!!") %> --> 
