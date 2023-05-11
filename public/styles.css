@@ -1,6 +1,6 @@
 h1 {
-  color: rgb(130, 59, 193);
-  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  color: rgb(158, 76, 230);
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
 }
 
 .feedContainer {
@@ -58,7 +58,7 @@ h1 {
 }
 
 #dividerNav {
-  background-color: rgba(130, 59, 193, 0.8);
+  background-color: rgba(176, 102, 255, 0.8);
   padding: 5px;
   margin-right: 5px;
   margin: 0px;
