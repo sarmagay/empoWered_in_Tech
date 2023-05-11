@@ -428,7 +428,13 @@ app.post('/userForm', async (req, res) => {
         let status = req.body.userStatus;
         let industry = req.body.industry;
         let otherIndustry = req.body.otherInterest;
-        industry.unshift(otherIndustry);
+        if (Array.isArray(industry) && (otherIndustry != '' || otherIndustry != null)){
+            industry.unshift(otherIndustry);
+        }
+        else if (typeof(industry) == "string" && (otherIndustry != '' || otherIndustry != null)){
+            industry = [industry];
+            industry.unshift(otherIndustry);
+        }
         let year = parseInt(req.body.classYear); // when user doesn't have a class year (ex: faculty), the NaN value doesn't show up in userProfile
         let majors = req.body.majors.split(", ")
         let minors = req.body.minors;
@@ -470,12 +476,28 @@ app.post('/oppForm', async (req, res) => {
     let name = req.body.opportunityName;
     let location = req.body.location;
     let type = req.body.oppType;
+    let otherType = req.body.otherOppType;
+    if (Array.isArray(industry) && (otherType != '' || otherType != null)){
+        industry.unshift(otherType);
+    }
+    else if (typeof(industry) == "string" && (otherType != '' || otherType != null)){
+        industry = [industry];
+        industry.unshift(otherType);
+    }
     let org = req.body.org;
     let subfield = req.body.subfield; // multiple things
+    let otherSubfield = req.body.otherOppSubfield;
+    if (Array.isArray(industry) && (otherSubfield != '' || otherSubfield != null)){
+        industry.unshift(otherSubfield);
+    }
+    else if (typeof(industry) == "string" && (otherSubfield != '' || otherSubfield != null)){
+        industry = [industry];
+        industry.unshift(otherSubfield);
+    }
     let appLink = req.body.applicationLink;
     let spam = req.body.spam; //
     let expiration = req.body.due; //
-    let refLink = req.body.referralLink; // is this the right name?
+    let refLink = req.body.referralLink;
     let description = req.body.description; //
     let addedByUID = req.session.uid;
     console.log('addedby uid: ', addedByUID);
@@ -568,9 +590,16 @@ app.post('/user/:uid', async (req, res) => {
     let status = req.body.userStatus;
     let industry = req.body.industry;
     let otherIndustry = req.body.otherInterest;
-    if (otherIndustry != null || otherIndustry != ''){
+    //console.log(typeof(industry));
+    if (Array.isArray(industry) && (otherIndustry != '' || otherIndustry != null)){
+        industry.unshift(otherIndustry);
+        console.log("hello");
+    }
+    else if (typeof(industry) == "string" && (otherIndustry != '' || otherIndustry != null)){
+        industry = [industry];
         industry.unshift(otherIndustry);
     }
+    
     let year = parseInt(req.body.classYear);
     let majors = req.body.majors.split(", ")
     let minors = req.body.minors;
@@ -667,7 +696,7 @@ app.post('/updatePost/:oid', async (req, res) => {
     let oid = parseInt(req.params.oid);
     const db = await Connection.open(mongoUri, EMPOWER);
     let currPost = db.collection(OPPS).find({oid: oid}).toArray();
-    let postAuthorUID = currPost[0].uid;
+    let postAuthorUID = currPost[0].addedBy.uid; //not working
     if (req.session.uid != postAuthorUID) {
         req.flash('error', `You do not have permission to modify this post. Please log out and log in as this post's author.`);
         return res.redirect('/user/' + req.session.uid);
@@ -679,14 +708,22 @@ app.post('/updatePost/:oid', async (req, res) => {
     let location = req.body.location;
     let type = req.body.oppType;
     let otherType = req.body.otherOppType;
-    if (otherType != null || otherType != ''){
-        type.unshift(otherType);
+    if (Array.isArray(industry) && (otherType != '' || otherType != null)){
+        industry.unshift(otherType);
+    }
+    else if (typeof(industry) == "string" && (otherType != '' || otherType != null)){
+        industry = [industry];
+        industry.unshift(otherType);
     }
     let org = req.body.org;
     let subfield = req.body.subfield
     let otherSubfield = req.body.otherOppSubfield;
-    if (otherSubfield != null || otherSubfield != ''){
-        type.unshift(otherSubfield);
+    if (Array.isArray(industry) && (otherSubfield != '' || otherSubfield != null)){
+        industry.unshift(otherSubfield);
+    }
+    else if (typeof(industry) == "string" && (otherSubfield != '' || otherSubfield != null)){
+        industry = [industry];
+        industry.unshift(otherSubfield);
     }
     let appLink = req.body.applicationLink;
     let refLink = req.body.referralLink;
