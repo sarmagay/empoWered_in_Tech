@@ -175,12 +175,8 @@ app.get('/post/:oid', async (req, res) => {
             const db = await Connection.open(mongoUri, EMPOWER);
             let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
             console.log(opp);
-            //let addedByUID = opp[0].addedBy.uid;
             let addedByName = opp[0].addedBy.name;
             console.log(addedByName);
-            //console.log(addedByUID);
-            //let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
-            //console.log(addedBy);
             return res.render('postPage.ejs', {post: opp[0], 
                                                addedByName: addedByName, 
                                                userUID: req.session.uid, 
@@ -268,10 +264,6 @@ app.get('/updatePost/:oid', async (req, res) => {
         req.flash('error', `You do not have permission to edit this opp`);
         return res.redirect('/post/' + postOID);
     }
-    let addedByUID = opp[0].addedBy.uid;
-    console.log(addedByUID);
-    let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
-    console.log(addedBy);
     //setting up the drop-down pre-select values to render in the updateOpp.ejs
     let isSelectedStr = opp[0].type;
     let isSelectedConf = false;
@@ -321,7 +313,7 @@ app.get('/updatePost/:oid', async (req, res) => {
     if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
     if (isCheckedArr.includes("other")){isCheckedOther = true;};
     return res.render('updateOpp.ejs', {opp: opp[0], 
-                                        addedBy: addedBy[0], 
+                                        addedBy: opp[0].addedBy, 
                                         userUID: req.session.uid, 
                                         userName: req.session.name,
                                         isCheckedBio: isCheckedBio,
@@ -695,8 +687,9 @@ app.post('/updatePost/:oid', async (req, res) => {
     }
     let oid = parseInt(req.params.oid);
     const db = await Connection.open(mongoUri, EMPOWER);
-    let currPost = db.collection(OPPS).find({oid: oid}).toArray();
-    let postAuthorUID = currPost[0].addedBy.uid; //not working
+    let currPost = await db.collection(OPPS).find({oid: oid}).toArray();
+    console.log(currPost);
+    let postAuthorUID = currPost[0].uid;
     if (req.session.uid != postAuthorUID) {
         req.flash('error', `You do not have permission to modify this post. Please log out and log in as this post's author.`);
         return res.redirect('/user/' + req.session.uid);
@@ -748,10 +741,6 @@ app.post('/updatePost/:oid', async (req, res) => {
     console.log(edited);
     let updatedOpp = await db.collection(OPPS).find({oid: oid}).toArray();
     console.log(updatedOpp[0]); // shows up as undefined
-    let addedByUID = updatedOpp[0].addedBy.uid;
-    let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
-
-    //console.log(addedBy[0]);
 
     //setting up the drop-down pre-select values to render in the updateOpp.ejs
     let isSelectedStr = updatedOpp[0].type;
@@ -796,7 +785,7 @@ app.post('/updatePost/:oid', async (req, res) => {
     if (isCheckedArr.includes("ml")){isCheckedML = true;};
     if (isCheckedArr.includes("prodDesign")){isCheckedProdDesign = true;};
     if (isCheckedArr.includes("prodMgmt")){isCheckedProdMgmt = true;};
-    if (isCheckedArr.includes("software engineering")){isCheckedSWE = true;};
+    if (isCheckedArr.includes("swe")){isCheckedSWE = true;};
     if (isCheckedArr.includes("systems")){isCheckedSystems = true;};
     if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
     if (isCheckedArr.includes("other")){isCheckedOther = true;};
@@ -804,7 +793,7 @@ app.post('/updatePost/:oid', async (req, res) => {
     res.render('updateOpp.ejs', {userUID: req.session.uid,
                                 userName: req.session.name,
                                 opp: updatedOpp[0], 
-                                addedBy: addedBy[0], 
+                                addedBy: currPost[0].addedBy, 
                                 isCheckedBio: isCheckedBio,
                                 isCheckedCloud: isCheckedCloud,
                                 isCheckedCompVision: isCheckedCompVision,
