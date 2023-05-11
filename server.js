@@ -649,7 +649,7 @@ app.post('/updatePost/:oid', async (req, res) => {
     let oid = parseInt(req.params.oid);
     const db = await Connection.open(mongoUri, EMPOWER);
     let currPost = db.collection(OPPS).find({oid: oid}).toArray();
-    let postAuthorUID = currPost[0].addedBy.uid;
+    let postAuthorUID = currPost[0].uid;
     if (req.session.uid != postAuthorUID) {
         req.flash('error', `You do not have permission to modify this post. Please log out and log in as this post's author.`);
         return res.redirect('/user/' + req.session.uid);
