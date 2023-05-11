@@ -119,9 +119,9 @@
          <li><label><input type="checkbox" name ="subfield" value="prodMgmt"/>Product Management</label></li>
          <% } %>
          <% if (isCheckedSWE){ %>
-         <li><label><input type="checkbox" name ="subfield" value="software engineering" checked/>Software Engineering</label></li>
+         <li><label><input type="checkbox" name ="subfield" value="swe" checked/>Software Engineering</label></li>
          <% } else { %>
-            <li><label><input type="checkbox" name ="subfield" value="software engineering"/>Software Engineering</label></li>
+            <li><label><input type="checkbox" name ="subfield" value="swe"/>Software Engineering</label></li>
          <% } %>
          <% if (isCheckedSystems){ %>
          <li><label><input type="checkbox" name ="subfield" value="systems" checked/>Systems</label></li>
@@ -180,7 +180,7 @@
    </label></p>
 
 
-   <p>Posted by: <%= addedBy.name %>, <%= addedBy.email %></p>
+   <p>Posted by: <%= addedBy.name %> %></p>
 
    <p><button type="submit">Update!</button></p>
 </form>
