@@ -674,12 +674,18 @@ app.post('/updatePost/:oid', async (req, res) => {
     let name = req.body.opportunityName;
     let location = req.body.location;
     let type = req.body.oppType;
-    let otherType = req.body.otherOppType; // if there's something here, this should be what renders
+    let otherType = req.body.otherOppType;
+    if (otherType != null || otherType != ''){
+        type.unshift(otherType);
+    }
     let org = req.body.org;
     let subfield = req.body.subfield
-    let otherSubfield = req.body.otherOppSubfield; // same as other "other"
+    let otherSubfield = req.body.otherOppSubfield;
+    if (otherSubfield != null || otherSubfield != ''){
+        type.unshift(otherSubfield);
+    }
     let appLink = req.body.applicationLink;
-    let refLink; // confused on what the name is
+    let refLink = req.body.referralLink;
     let expiration = req.body.due;
     let description = req.body.description;
 
