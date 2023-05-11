@@ -157,28 +157,35 @@ app.get('/oppForm', (req, res) => {
 
 
 app.get('/post/:oid', async (req, res) => {
-    if (req.session.logged_in) {
-        // need data from corresponding opportunity doc
-        console.log(req.params.oid);
-        let postOID = parseInt(req.params.oid);
-        console.log(postOID);
-        req.session.postOID = postOID;
-        const db = await Connection.open(mongoUri, EMPOWER);
-        let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
-        console.log(opp);
-        //let addedByUID = opp[0].addedBy.uid;
-        let addedByName = opp[0].addedBy.name;
-        console.log(addedByName);
-        //console.log(addedByUID);
-        //let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
-        //console.log(addedBy);
-        return res.render('postPage.ejs', {post: opp[0], 
-                                           addedByName: addedByName, 
-                                           userUID: req.session.uid, 
-                                           userName: req.session.name});
+    let postOID = parseInt(req.params.oid);
+    const db = await Connection.open(mongoUri, EMPOWER);
+    let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
+    if (opp.length != 0) {
+        if (req.session.logged_in) {
+            // need data from corresponding opportunity doc
+            let postOID = parseInt(req.params.oid);
+            console.log(postOID);
+            req.session.postOID = postOID;
+            const db = await Connection.open(mongoUri, EMPOWER);
+            let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
+            console.log(opp);
+            //let addedByUID = opp[0].addedBy.uid;
+            let addedByName = opp[0].addedBy.name;
+            console.log(addedByName);
+            //console.log(addedByUID);
+            //let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
+            //console.log(addedBy);
+            return res.render('postPage.ejs', {post: opp[0], 
+                                               addedByName: addedByName, 
+                                               userUID: req.session.uid, 
+                                               userName: req.session.name});
+        } else {
+            req.flash('error', `User must be logged in.`);
+            return res.redirect('/login');
+        }
     } else {
-        req.flash('error', `User must be logged in`);
-        return res.redirect('/login');
+        req.flash('error', `Post does not exist.`);
+        return res.redirect('/postings');
     }
 })
 
