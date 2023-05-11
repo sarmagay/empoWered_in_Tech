@@ -64,7 +64,7 @@
    </label></p>
 
 
-   <p><label>If "Other", please specify: <input type=text name="otherOppType"></label></p>
+   <p><label>If "Other", please specify: <input type=text name="otherOppType" value="<%= opp.type[0] %>"></label></p>
 
 
    <p><label>Organization/Company: <input type=text name="org" value="<%= opp.org %>" required></label></p>
@@ -119,9 +119,9 @@
          <li><label><input type="checkbox" name ="subfield" value="prodMgmt"/>Product Management</label></li>
          <% } %>
          <% if (isCheckedSWE){ %>
-         <li><label><input type="checkbox" name ="subfield" value="software engineering" checked/>Software Engineering</label></li>
+         <li><label><input type="checkbox" name ="subfield" value="swe" checked/>Software Engineering</label></li>
          <% } else { %>
-            <li><label><input type="checkbox" name ="subfield" value="software engineering"/>Software Engineering</label></li>
+            <li><label><input type="checkbox" name ="subfield" value="swe"/>Software Engineering</label></li>
          <% } %>
          <% if (isCheckedSystems){ %>
          <li><label><input type="checkbox" name ="subfield" value="systems" checked/>Systems</label></li>
@@ -142,7 +142,7 @@
      </div>
 
 
-   <p><label>If "Other", please specify: <input type=text name="otherOppSubfield"></label></p>
+   <p><label>If "Other", please specify: <input type=text name="otherOppSubfield" value="<%= opp.subfield[0] %>"></label></p>
 
 
    <p><label>Location (put "remote" if remote opportunity): <input name="location" value="<%= opp.location %>" required></label></p>
@@ -180,7 +180,7 @@
    </label></p>
 
 
-   <p>Posted by: <%= addedBy.name %>, <%= addedBy.email %></p>
+   <p>Posted by: <%= addedBy.name %> %></p>
 
    <p><button type="submit">Update!</button></p>
 </form>

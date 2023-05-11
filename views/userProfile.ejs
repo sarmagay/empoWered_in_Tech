@@ -28,6 +28,7 @@
 
         <p><label>User status:
             <select name="userStatus" value="<%= user.status %>" required>
+                <%# displays the user's status as pre-selected and then includes the other status options %>
                 <option value="<%= user.status %>"><%= user.status %></option>
                 <% statuses.forEach((status) => { %>
                     <% if (user.status != status) { %>
@@ -116,7 +117,7 @@
                 </ul>
         </div>
 
-        <p><label>If "Other", please specify: <input type=text name="otherInterest"></label></p>
+        <p><label>If "Other", please specify: <input type=text name="otherInterest" value="<%= user.industry[0] %>"></label></p>
         
         <% if (isNaN(user.classYear)) { %>
             <!-- <% console.log("it is Nan!!") %> --> 

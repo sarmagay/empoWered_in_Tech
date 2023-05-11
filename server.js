@@ -83,6 +83,10 @@ app.get('/signUp', (req, res) => {
     return res.render('signUp.ejs', {action: '/userForm/', data: req.query});
 })
 
+app.get('/userForm', (req, res) => {
+    return res.render('userForm.ejs', {email: req.session.username});
+})
+
 app.get('/search', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
     let term = req.query.term;
@@ -105,7 +109,11 @@ app.get('/postings', async (req, res) => {
         const db = await Connection.open(mongoUri, EMPOWER);
         let allOpps = await db.collection(OPPS).find({oid: {$exists: true}}).toArray();
         console.log(req.session.uid, req.session.name);
-        return res.render('postings.ejs', {list: allOpps, userUID: req.session.uid, userName: req.session.name});
+        return res.render('postings.ejs', {
+            list: allOpps, 
+            userUID: req.session.uid,
+            userName: req.session.name
+        });
     } else {
         req.flash('error', `User must be logged in`);
         return res.redirect('/login');
@@ -116,22 +124,32 @@ app.get('/do-postings', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
     let showOpps = await db.collection(OPPS).find({}).toArray();
     let btnClicked = req.query.button;
+    // filters postings by what filter button user selects
+    // shows all postings
     if (btnClicked == "allOpBtn"){
         showOpps = await db.collection(OPPS).find({}).toArray();
     }
+    // shows internships
     else if (btnClicked == "internshipBtn"){
         showOpps = await db.collection(OPPS).find({type:{$regex: /internship/i }}).toArray();
     }
+    // shows jobs
     else if (btnClicked == "jobBtn"){
         showOpps = await db.collection(OPPS).find({type:{$regex: /job/i }}).toArray();
     }
+    // shows research
     else if (btnClicked == "researchBtn"){
         showOpps = await db.collection(OPPS).find({type:{$regex: /research/i }}).toArray();
     }
+    // shows remote
     else if (btnClicked == "remoteBtn"){
         showOpps = await db.collection(OPPS).find({location:{$regex: /remote/i }}).toArray();
     }
-    return res.render('postings.ejs', {list: showOpps, userUID: req.session.uid, userName: req.session.name});
+    return res.render('postings.ejs', {
+        list: showOpps, 
+        userUID: req.session.uid, 
+        userName: req.session.name
+    });
 })
 
 app.get('/oppForm', (req, res) => {
@@ -157,12 +175,8 @@ app.get('/post/:oid', async (req, res) => {
             const db = await Connection.open(mongoUri, EMPOWER);
             let opp = await db.collection(OPPS).find({oid: postOID}).toArray();
             console.log(opp);
-            //let addedByUID = opp[0].addedBy.uid;
             let addedByName = opp[0].addedBy.name;
             console.log(addedByName);
-            //console.log(addedByUID);
-            //let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
-            //console.log(addedBy);
             return res.render('postPage.ejs', {post: opp[0], 
                                                addedByName: addedByName, 
                                                userUID: req.session.uid, 
@@ -250,10 +264,6 @@ app.get('/updatePost/:oid', async (req, res) => {
         req.flash('error', `You do not have permission to edit this opp`);
         return res.redirect('/post/' + postOID);
     }
-    let addedByUID = opp[0].addedBy.uid;
-    console.log(addedByUID);
-    let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
-    console.log(addedBy);
     //setting up the drop-down pre-select values to render in the updateOpp.ejs
     let isSelectedStr = opp[0].type;
     let isSelectedConf = false;
@@ -303,7 +313,7 @@ app.get('/updatePost/:oid', async (req, res) => {
     if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
     if (isCheckedArr.includes("other")){isCheckedOther = true;};
     return res.render('updateOpp.ejs', {opp: opp[0], 
-                                        addedBy: addedBy[0], 
+                                        addedBy: opp[0].addedBy, 
                                         userUID: req.session.uid, 
                                         userName: req.session.name,
                                         isCheckedBio: isCheckedBio,
@@ -409,6 +419,8 @@ app.post('/userForm', async (req, res) => {
         let uid = req.body.uid;
         let status = req.body.userStatus;
         let industry = req.body.industry;
+        let otherIndustry = req.body.otherInterest;
+        industry.unshift(otherIndustry);
         let year = parseInt(req.body.classYear); // when user doesn't have a class year (ex: faculty), the NaN value doesn't show up in userProfile
         let majors = req.body.majors.split(", ")
         let minors = req.body.minors;
@@ -547,7 +559,11 @@ app.post('/user/:uid', async (req, res) => {
     let email = req.body.email;
     let status = req.body.userStatus;
     let industry = req.body.industry;
-    let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
+    let otherIndustry = req.body.otherInterest;
+    if (otherIndustry != null || otherIndustry != ''){
+        industry.unshift(otherIndustry);
+    }
+    let year = parseInt(req.body.classYear);
     let majors = req.body.majors.split(", ")
     let minors = req.body.minors;
     const db = await Connection.open(mongoUri, EMPOWER);
@@ -566,7 +582,7 @@ app.post('/user/:uid', async (req, res) => {
         });
     console.log(edited);
     let updatedUser = await db.collection(USERS).find({uid: uid}).toArray();
-    console.log(updatedUser[0]); // shows up as undefined
+    console.log(updatedUser[0]);
     res.redirect('/user/' + uid); // goes to correct link tho
 })
 
@@ -642,7 +658,8 @@ app.post('/updatePost/:oid', async (req, res) => {
     }
     let oid = parseInt(req.params.oid);
     const db = await Connection.open(mongoUri, EMPOWER);
-    let currPost = db.collection(OPPS).find({oid: oid}).toArray();
+    let currPost = await db.collection(OPPS).find({oid: oid}).toArray();
+    console.log(currPost);
     let postAuthorUID = currPost[0].addedBy.uid;
     if (req.session.uid != postAuthorUID) {
         req.flash('error', `You do not have permission to modify this post. Please log out and log in as this post's author.`);
@@ -654,12 +671,18 @@ app.post('/updatePost/:oid', async (req, res) => {
     let name = req.body.opportunityName;
     let location = req.body.location;
     let type = req.body.oppType;
-    let otherType = req.body.otherOppType; // if there's something here, this should be what renders
+    let otherType = req.body.otherOppType;
+    if (otherType != null || otherType != ''){
+        type.unshift(otherType);
+    }
     let org = req.body.org;
     let subfield = req.body.subfield
-    let otherSubfield = req.body.otherOppSubfield; // same as other "other"
+    let otherSubfield = req.body.otherOppSubfield;
+    if (otherSubfield != null || otherSubfield != ''){
+        type.unshift(otherSubfield);
+    }
     let appLink = req.body.applicationLink;
-    let refLink; // confused on what the name is
+    let refLink = req.body.referralLink;
     let expiration = req.body.due;
     let description = req.body.description;
 
@@ -681,10 +704,6 @@ app.post('/updatePost/:oid', async (req, res) => {
     console.log(edited);
     let updatedOpp = await db.collection(OPPS).find({oid: oid}).toArray();
     console.log(updatedOpp[0]); // shows up as undefined
-    let addedByUID = updatedOpp[0].addedBy.uid;
-    let addedBy = await db.collection(USERS).find({uid: addedByUID}).toArray();
-
-    //console.log(addedBy[0]);
 
     //setting up the drop-down pre-select values to render in the updateOpp.ejs
     let isSelectedStr = updatedOpp[0].type;
@@ -729,7 +748,7 @@ app.post('/updatePost/:oid', async (req, res) => {
     if (isCheckedArr.includes("ml")){isCheckedML = true;};
     if (isCheckedArr.includes("prodDesign")){isCheckedProdDesign = true;};
     if (isCheckedArr.includes("prodMgmt")){isCheckedProdMgmt = true;};
-    if (isCheckedArr.includes("software engineering")){isCheckedSWE = true;};
+    if (isCheckedArr.includes("swe")){isCheckedSWE = true;};
     if (isCheckedArr.includes("systems")){isCheckedSystems = true;};
     if (isCheckedArr.includes("uiux")){isCheckedUiUx = true;};
     if (isCheckedArr.includes("other")){isCheckedOther = true;};
@@ -737,7 +756,7 @@ app.post('/updatePost/:oid', async (req, res) => {
     res.render('updateOpp.ejs', {userUID: req.session.uid,
                                 userName: req.session.name,
                                 opp: updatedOpp[0], 
-                                addedBy: addedBy[0], 
+                                addedBy: currPost[0].addedBy, 
                                 isCheckedBio: isCheckedBio,
                                 isCheckedCloud: isCheckedCloud,
                                 isCheckedCompVision: isCheckedCompVision,
