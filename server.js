@@ -115,7 +115,7 @@ app.get('/search', async (req, res) => {
 app.get('/postings', async (req, res) => {
     if (req.session.logged_in) {
         const db = await Connection.open(mongoUri, EMPOWER);
-        let allOpps = await db.collection(OPPS).find({}).toArray();
+        let allOpps = await db.collection(OPPS).find({oid: {$exists: true}}).toArray();
         console.log(req.session.uid, req.session.name);
         return res.render('postings.ejs', {list: allOpps, userUID: req.session.uid, userName: req.session.name});
     } else {
@@ -154,7 +154,6 @@ app.get('/oppForm', (req, res) => {
         return res.redirect('/login');
     }
 })
-
 
 
 app.get('/post/:oid', async (req, res) => {
@@ -611,14 +610,15 @@ app.post('/post/delete/:oid', async (req, res) => {
         req.flash('error', `User must be logged in`);
         return res.redirect('/login');
     }
+    const oppID = parseInt(req.params.oid);
     const db = await Connection.open(mongoUri, EMPOWER);
-    let currPost = db.collection(OPPS).find({oid: oid}).toArray();
+    let currPost = await db.collection(OPPS).find({oid: oppID}).toArray();
+    console.log(currPost)
     let postAuthorUID = currPost[0].addedBy.uid;
     if (req.session.uid != postAuthorUID) {
         req.flash('error', `You do not have permission to modify this post. Please log out and log in as this post's author.`);
         return res.redirect('/user/' + req.session.uid);
     }
-    const oppID = parseInt(req.params.oid);
     const deletion = await db.collection(OPPS).deleteOne({oid: oppID});
     if (deletion.deletedCount == 1) {
         console.log(deletion.acknowledged);
