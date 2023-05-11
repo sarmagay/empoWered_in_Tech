@@ -10,7 +10,6 @@
 </head>
 <body>
     <%- include("partials/simpleNavbar.ejs") %>
-    <%- include("partials/flashes.ejs") %>
 
     <h1>Sign-Up</h1>
 
@@ -19,7 +18,9 @@
         <div class="container">
           <label for="uname"><b>Email address</b></label>
           <input type="text" placeholder="Enter Wellesley Email Address" name="uname" required>
-      
+        </div>
+
+        <div class="container">
           <label for="psw"><b>Create Password</b></label>
           <input type="password" placeholder="Enter Password" name="psw" required>
 
@@ -28,7 +29,11 @@
       
           <button type="submit">Sign-Up</button>
         </div>
+        
     </form>
+
+    <%- include("partials/flashes.ejs") %>
+
 
     <!-- load local js -->
     <script src="/main.js"></script>
