@@ -469,22 +469,22 @@ app.post('/oppForm', async (req, res) => {
     let location = req.body.location;
     let type = req.body.oppType;
     let otherType = req.body.otherOppType;
-    if (Array.isArray(industry) && (otherType != '' || otherType != null)){
-        industry.unshift(otherType);
+    if (Array.isArray(type) && (otherType != '' || otherType != null)){
+        type.push(otherType);
     }
-    else if (typeof(industry) == "string" && (otherType != '' || otherType != null)){
-        industry = [industry];
-        industry.unshift(otherType);
+    else if (typeof(type) == "string" && (otherType != '' || otherType != null)){
+        type = [type];
+        type.push(otherType);
     }
     let org = req.body.org;
     let subfield = req.body.subfield; // multiple things
     let otherSubfield = req.body.otherOppSubfield;
-    if (Array.isArray(industry) && (otherSubfield != '' || otherSubfield != null)){
-        industry.unshift(otherSubfield);
+    if (Array.isArray(subfield) && (otherSubfield != '' || otherSubfield != null)){
+        subfield.unshift(otherSubfield);
     }
-    else if (typeof(industry) == "string" && (otherSubfield != '' || otherSubfield != null)){
-        industry = [industry];
-        industry.unshift(otherSubfield);
+    else if (typeof(subfield) == "string" && (otherSubfield != '' || otherSubfield != null)){
+        subfield = [subfield];
+        subfield.unshift(otherSubfield);
     }
     let appLink = req.body.applicationLink;
     let spam = req.body.spam; //
@@ -689,7 +689,7 @@ app.post('/updatePost/:oid', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
     let currPost = await db.collection(OPPS).find({oid: oid}).toArray();
     console.log(currPost);
-    let postAuthorUID = currPost[0].uid;
+    let postAuthorUID = currPost[0].addedBy.uid;
     if (req.session.uid != postAuthorUID) {
         req.flash('error', `You do not have permission to modify this post. Please log out and log in as this post's author.`);
         return res.redirect('/user/' + req.session.uid);
@@ -701,22 +701,22 @@ app.post('/updatePost/:oid', async (req, res) => {
     let location = req.body.location;
     let type = req.body.oppType;
     let otherType = req.body.otherOppType;
-    if (Array.isArray(industry) && (otherType != '' || otherType != null)){
-        industry.unshift(otherType);
+    if (Array.isArray(type) && (otherType != '' || otherType != null)){
+        type.push(otherType);
     }
-    else if (typeof(industry) == "string" && (otherType != '' || otherType != null)){
-        industry = [industry];
-        industry.unshift(otherType);
+    else if (typeof(type) == "string" && (otherType != '' || otherType != null)){
+        type = [type];
+        type.push(otherType);
     }
     let org = req.body.org;
     let subfield = req.body.subfield
     let otherSubfield = req.body.otherOppSubfield;
-    if (Array.isArray(industry) && (otherSubfield != '' || otherSubfield != null)){
-        industry.unshift(otherSubfield);
+    if (Array.isArray(subfield) && (otherSubfield != '' || otherSubfield != null)){
+        subfield.unshift(otherSubfield);
     }
-    else if (typeof(industry) == "string" && (otherSubfield != '' || otherSubfield != null)){
-        industry = [industry];
-        industry.unshift(otherSubfield);
+    else if (typeof(subfield) == "string" && (otherSubfield != '' || otherSubfield != null)){
+        subfield = [subfield];
+        subfield.unshift(otherSubfield);
     }
     let appLink = req.body.applicationLink;
     let refLink = req.body.referralLink;
@@ -743,7 +743,7 @@ app.post('/updatePost/:oid', async (req, res) => {
     console.log(updatedOpp[0]); // shows up as undefined
 
     //setting up the drop-down pre-select values to render in the updateOpp.ejs
-    let isSelectedStr = updatedOpp[0].type;
+    let isSelectedStr = updatedOpp[0].type[0];
     let isSelectedConf = false;
     let isSelectedFel = false;
     let isSelectedJob = false;
