@@ -83,27 +83,15 @@ app.get('/signUp', (req, res) => {
     return res.render('signUp.ejs', {action: '/userForm/', data: req.query});
 })
 
-// delete once user sessions are figured out
-app.get('/userForm', (req, res) => {
-    return res.render('userForm.ejs', {email: req.session.username});
-})
-
 app.get('/search', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
     let term = req.query.term;
     let category = req.query.category;
-    // console.log("submitted= name: " + term + ", type: " + category);
+    console.log("submitted= name: " + term + ", type: " + category);
     let findDict = {};
     findDict[category] = (new RegExp(term, "i"));
-    
-    console.log(category); // name
-    console.log(new RegExp(term, "i")); // /reuse/i
-    console.log(term); // reuse
-    console.log(findDict[category] == /reuse/i); // true
 
-    console.log(findDict[category]); // /reuse/i
-    console.log(findDict); // { name: /reuse/i }
-
+    // looks for opportunities that match search and displays them. If no matches, flashes that no results were found.
     let results = await db.collection(OPPS).find(findDict).toArray();
     if (results.length == 0) {
         req.flash('error', `Sorry, no results found.`);
