@@ -83,6 +83,10 @@ app.get('/signUp', (req, res) => {
     return res.render('signUp.ejs', {action: '/userForm/', data: req.query});
 })
 
+app.get('/userForm', (req, res) => {
+    return res.render('userForm.ejs', {email: req.session.username});
+})
+
 app.get('/search', async (req, res) => {
     const db = await Connection.open(mongoUri, EMPOWER);
     let term = req.query.term;
