@@ -105,6 +105,9 @@ app.get('/search', async (req, res) => {
     console.log(findDict); // { name: /reuse/i }
 
     let results = await db.collection(OPPS).find(findDict).toArray();
+    if (results.length == 0) {
+        req.flash('error', `Sorry, no results found.`);
+    }
     console.log(results);
     return res.render('postings.ejs', {list: results, userUID: req.session.uid, userName: req.session.name});
 })

@@ -10,7 +10,7 @@
 </head>
 <body>
     <%- include("partials/navbar.ejs") %>
-    <%- include("partials/flashes.ejs") %>
+
         <form class="search" method="GET" action="/search">
         <p><label>Search <input type="text" required name="term" placeholder="search"></label>
         <label>kind
@@ -25,6 +25,8 @@
     </form>
 
     <h1>Computer Science Opportunities</h1>
+    
+    <%- include("partials/flashes.ejs") %>
 
     <form method="GET" action="/do-postings">
         <div id="filterBtn" name=""filterBtn>
