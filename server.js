@@ -421,6 +421,8 @@ app.post('/userForm', async (req, res) => {
         let uid = req.body.uid;
         let status = req.body.userStatus;
         let industry = req.body.industry;
+        let otherIndustry = req.body.otherInterest;
+        industry.unshift(otherIndustry);
         let year = parseInt(req.body.classYear); // when user doesn't have a class year (ex: faculty), the NaN value doesn't show up in userProfile
         let majors = req.body.majors.split(", ")
         let minors = req.body.minors;
@@ -559,7 +561,11 @@ app.post('/user/:uid', async (req, res) => {
     let email = req.body.email;
     let status = req.body.userStatus;
     let industry = req.body.industry;
-    let year = parseInt(req.body.classYear); // fix when user doesn't have a class year
+    let otherIndustry = req.body.otherInterest;
+    if (otherIndustry != null || otherIndustry != ''){
+        industry.unshift(otherIndustry);
+    }
+    let year = parseInt(req.body.classYear);
     let majors = req.body.majors.split(", ")
     let minors = req.body.minors;
     const db = await Connection.open(mongoUri, EMPOWER);
